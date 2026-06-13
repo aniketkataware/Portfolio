@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Aniket V. Kataware | Pavement Engineering Research</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        /* =====================================================================
+           ALTERNATE LAYOUT (p2): warm "academic journal" editorial theme.
+           Long single-scroll page + sticky top nav + scroll-spy — a deliberate
+           contrast to p.html's cool blueprint sidebar SPA. Same Google-Sheet
+           loader, renderers and container IDs are reused verbatim; only the
+           page structure, palette and typography differ.
+           ===================================================================== */
+        :root{
+            /* Warm paper + ink + terracotta/gold/sage palette */
+            --paper:#f4ede1;
+            --band:#ece2d2;
+            --ink:#262019;
+
+            --bg-body:#e7dcc8;          /* image/placeholder backdrops (warm neutral) */
+            --bg-card:#fffdf8;
+            --text-main:#3a342c;
+            --text-muted:#857a69;
+            --heading-color:#262019;
+
+            --primary:#b4532a;          /* terracotta — main accent */
+            --primary-dark:#8d3d1c;
+            --primary-light:#f1ddcd;
+            --accent:#e6aa1f;           /* gold — matches the nav road-marking yellow (#f4c20d) */
+            --accent-dark:#8a661f;
+            --secondary:#5d7d6e;        /* sage / olive */
+            --danger:#b3361f;
+
+            --border-color:#e2d6c2;
+            --shadow-sm:0 1px 2px rgba(60,45,30,.06);
+            --shadow-md:0 8px 22px rgba(60,45,30,.09);
+            --shadow-lg:0 16px 34px rgba(60,45,30,.12);
+            --shadow-hover:0 22px 44px rgba(60,45,30,.18);
+            --radius-md:10px;
+            --radius-lg:16px;
+        }
+
+        *{ margin:0; padding:0; box-sizing:border-box; }
+        html{ scroll-behavior:smooth; }
+        body{
+            font-family:'Inter',sans-serif; background:var(--paper); color:var(--text-main);
+            line-height:1.75; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+        }
+        h1,h2,h3,h4{ font-family:'Fraunces','Georgia',serif; color:var(--heading-color); line-height:1.14; font-weight:600; text-wrap:balance; }
+        img{ max-width:100%; display:block; }
+        a{ color:inherit; }
+        .lede,.lead-text,.section-head p,.prg-desc,.person-topic,.card p{ text-wrap:pretty; }
+        ::selection{ background:var(--accent); color:var(--ink); }
+        /* Accessible keyboard focus (mouse clicks stay clean via :focus-visible) */
+        a:focus-visible,button:focus-visible,.btn:focus-visible,.lab-tab:focus-visible,input:focus-visible{
+            outline:2px solid var(--primary); outline-offset:3px; border-radius:6px;
+        }
+        .display{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-.02em; }
+        .wrap{ max-width:1180px; margin:0 auto; padding:0 2rem; }
+        section{ scroll-margin-top:84px; }
+
+        /* --- PALETTE-THEMED SCROLLBARS (whole window + overflow panes) --- */
+        html{ scrollbar-width:thin; scrollbar-color:var(--primary) var(--band); }
+        ::-webkit-scrollbar{ width:12px; height:12px; }
+        ::-webkit-scrollbar-track{ background:var(--band); }
+        ::-webkit-scrollbar-thumb{ background:linear-gradient(var(--primary),var(--primary-dark)); border-radius:7px; border:2px solid var(--band); }
+        ::-webkit-scrollbar-thumb:hover{ background:linear-gradient(var(--accent),var(--accent-dark)); }
+        ::-webkit-scrollbar-corner{ background:var(--band); }
+
+        /* --- STICKY "ROAD" HEADER + HORIZONTAL NAV ---
+           Black asphalt bar; an inline SVG paints the road markings: a solid
+           yellow edge line at both ends and a dashed centre lane (long gaps). */
+        .site-header{
+            position:sticky; top:0; z-index:1000; overflow:hidden;
+            background:#14110d;
+            background-image:linear-gradient(180deg,#1e1a13,#14110d 55%,#100d08);
+            transition:box-shadow .3s ease;
+        }
+        .site-header.scrolled{ box-shadow:0 8px 26px rgba(0,0,0,.35); }
+        .road-markings{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+        .road-edge{ stroke:#f4c20d; stroke-width:3; vector-effect:non-scaling-stroke; }
+        .road-lane{ stroke:#f4c20d; stroke-width:4; stroke-dasharray:30 54; vector-effect:non-scaling-stroke; opacity:.95; }
+        .header-inner{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:1.1rem 2rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+        .wordmark{ font-family:'Fraunces',serif; font-weight:600; font-size:1.28rem; color:#ffffff; cursor:pointer; line-height:1.1; text-decoration:none; display:flex; flex-direction:column; text-shadow:0 1px 8px rgba(0,0,0,.6); background:rgba(16,13,9,.82); padding:.32rem .7rem; border-radius:8px; }
+        .wordmark span{ font-family:'Inter',sans-serif; font-size:.6rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#f4c20d; margin-top:.3rem; text-shadow:none; }
+        .main-nav{ display:flex; gap:.15rem; align-items:center; }
+        .main-nav a{ font-size:.83rem; font-weight:500; color:#ece3d2; text-decoration:none; padding:.5rem .78rem; border-radius:7px; cursor:pointer; transition:all .2s ease; position:relative; white-space:nowrap; background:rgba(16,13,9,.85); }
+        .main-nav a:hover{ color:#14110d; background:#f4c20d; }
+        .main-nav a.active{ color:#f4c20d; }
+        .main-nav a.active::after{ content:''; position:absolute; left:.78rem; right:.78rem; bottom:.22rem; height:2px; background:#f4c20d; border-radius:2px; }
+        .menu-toggle{ display:none; background:none; border:none; font-size:1.35rem; color:#f4c20d; cursor:pointer; padding:.2rem .4rem; }
+        .nav-backdrop{ position:fixed; inset:0; background:rgba(38,32,25,.42); opacity:0; visibility:hidden; transition:.3s ease; z-index:1050; }
+        .nav-backdrop.show{ opacity:1; visibility:visible; }
+
+        /* --- HERO --- */
+        .hero{ position:relative; padding:5rem 0 5.5rem; overflow:hidden; }
+        .hero::before{ content:''; position:absolute; top:-25%; right:-12%; width:540px; height:540px; background:radial-gradient(circle, rgba(180,83,42,.11), transparent 68%); pointer-events:none; }
+        .hero::after{ content:''; position:absolute; bottom:-20%; left:-10%; width:420px; height:420px; background:radial-gradient(circle, rgba(194,147,58,.10), transparent 70%); pointer-events:none; }
+        .hero-grid{ display:grid; grid-template-columns:1.25fr .85fr; gap:3.5rem; align-items:center; position:relative; z-index:1; }
+        .eyebrow{ display:inline-block; font-size:.72rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:var(--primary); margin-bottom:1.1rem; }
+        .eyebrow::before{ content:''; display:inline-block; width:26px; height:1px; background:var(--accent); vertical-align:middle; margin-right:.6rem; }
+        .hero-text h1{ font-size:clamp(2.9rem,6vw,4.7rem); margin-bottom:1.25rem; }
+        .hero-desig{ font-size:.95rem; font-weight:600; color:var(--primary); letter-spacing:.04em; margin-bottom:.5rem; text-transform:uppercase; }
+        .lede{ font-size:1.12rem; color:var(--text-main); max-width:38rem; margin-bottom:2rem; }
+        .hero-actions{ display:flex; gap:1rem; flex-wrap:wrap; }
+        .hero-photo{ position:relative; justify-self:center; }
+        .hero-photo img{ width:min(340px,82vw); aspect-ratio:1/1; object-fit:cover; border-radius:14px; border:1px solid var(--border-color); box-shadow:var(--shadow-lg); position:relative; z-index:1; display:block; }
+        /* clean offset accent frame — same size & corner radius as the photo, nudged down-right */
+        .hero-photo::after{ content:''; position:absolute; inset:0; z-index:0; transform:translate(16px,16px); border:2px solid var(--accent); border-radius:14px; }
+
+        /* --- BUTTONS --- */
+        .btn{ display:inline-flex; align-items:center; gap:.55rem; padding:.8rem 1.45rem; background:var(--primary); color:#fff; border:1px solid var(--primary); border-radius:7px; font-size:.86rem; font-weight:600; text-decoration:none; cursor:pointer; transition:all .25s ease; }
+        .btn:hover{ background:var(--primary-dark); border-color:var(--primary-dark); transform:translateY(-2px); box-shadow:var(--shadow-md); }
+        .btn-outline{ background:transparent; color:var(--primary); border-color:var(--primary); }
+        .btn-outline:hover{ background:var(--primary); color:#fff; }
+        .btn-secondary{ background:var(--bg-card); color:var(--heading-color); border-color:var(--border-color); }
+        .btn-secondary:hover{ background:var(--bg-card); color:var(--primary); box-shadow:var(--shadow-sm); }
+
+        /* --- SECTIONS / BANDS --- */
+        .section{ padding:5rem 0; }
+        .band{ background:var(--band); }
+
+        /* SPA views: only the active section-group is shown; it animates in on nav click */
+        main > section{ display:none; }
+        main > section.view-active{ display:block; animation:viewIn .55s cubic-bezier(.22,.61,.36,1) both; }
+        @keyframes viewIn{ from{ opacity:0; transform:translateY(22px); } to{ opacity:1; transform:none; } }
+        @media (prefers-reduced-motion:reduce){ main > section.view-active{ animation:none; } }
+        .section-head{ max-width:760px; margin:0 auto 3rem; text-align:center; }
+        .section-head .eyebrow{ margin-bottom:.7rem; }
+        .section-head h2{ font-size:clamp(2rem,4vw,2.9rem); }
+        .section-head p{ color:var(--text-muted); margin-top:1rem; font-size:1.05rem; }
+        .sub-head{ display:flex; align-items:center; gap:1.1rem; margin:3.5rem 0 1.7rem; }
+        .sub-head:first-child{ margin-top:0; }
+        .sub-head h3{ font-size:1.5rem; color:var(--heading-color); white-space:nowrap; }
+        .sub-head h3 i{ color:var(--accent); margin-right:.5rem; }
+        .sub-head::after{ content:''; flex:1; height:1px; background:var(--border-color); }
+        .lead-text{ font-size:1.1rem; max-width:54rem; color:var(--text-main); }
+        .center{ text-align:center; }
+        .mt-2{ margin-top:2rem; } .mb-3{ margin-bottom:3rem; }
+
+        /* --- STATS BAND (dark "by the numbers" strip) --- */
+        .stats-band{ background:var(--ink); padding:3.2rem 0; }
+        .stats-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:1rem; }
+        .stats-band .stat-box{ background:transparent; border:none; box-shadow:none; cursor:pointer; text-align:center; padding:1rem .5rem; display:flex; flex-direction:column; align-items:center; gap:.35rem; border-radius:12px; transition:background .25s ease, transform .25s ease; color:var(--paper); }
+        .stats-band .stat-box::before{ display:none; }
+        .stats-band .stat-box:hover{ background:rgba(255,255,255,.05); transform:translateY(-4px); }
+        .stat-icon-wrapper{ width:46px; height:46px; border-radius:12px; background:var(--primary-light); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:1.15rem; margin-bottom:.35rem; transition:all .25s ease; }
+        .stats-band .stat-icon-wrapper{ border-radius:50%; background:rgba(244,237,225,.10); color:var(--accent); }
+        .stats-band .stat-box:hover .stat-icon-wrapper{ background:var(--accent); color:var(--ink); transform:scale(1.06); }
+        .stat-number{ font-family:'Fraunces',serif; font-size:2.5rem; font-weight:600; line-height:1; color:#fff; }
+        .stat-label{ font-size:.66rem; letter-spacing:.13em; text-transform:uppercase; font-weight:600; color:#cabfac; margin:0; }
+
+        /* --- CARDS / GRIDS --- */
+        .grid-2{ display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:1.6rem; }
+        .grid-3{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.6rem; }
+        .grid-4{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.4rem; }
+        .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; align-items:start; }
+
+        .card{ background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:1.9rem; box-shadow:var(--shadow-sm); position:relative; overflow:hidden; transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease; }
+        .card::before{ content:''; position:absolute; top:0; left:0; width:100%; height:3px; background:linear-gradient(90deg,var(--primary),var(--accent)); transform:scaleX(0); transform-origin:left; transition:transform .35s ease; }
+        .card:hover{ transform:translateY(-4px); box-shadow:var(--shadow-md); border-color:#d8c6ad; }
+        .card:hover::before{ transform:scaleX(1); }
+        .card h3{ font-family:'Fraunces',serif; font-size:1.2rem; margin-bottom:.45rem; color:var(--heading-color); }
+        .card p{ color:var(--text-main); }
+        .flex-card{ display:flex; flex-direction:column; height:100%; }
+        .flex-card-content{ flex:1; }
+        .project-agency{ font-size:.85rem; color:var(--text-muted); margin-top:.7rem; font-weight:500; }
+
+        /* --- BADGES --- */
+        .badge{ display:inline-block; padding:.32em .72em; font-size:.7rem; font-weight:600; letter-spacing:.03em; border-radius:4px; background:var(--band); color:var(--text-muted); border:1px solid var(--border-color); margin:0 .35rem .7rem 0; }
+        .badge-light{ background:var(--primary-light); color:var(--primary-dark); border-color:transparent; }
+        .badge-success{ background:#e2ebe1; color:#3f6f57; border-color:transparent; }
+        .badge-warning{ background:#f6e9cf; color:#8a661f; border-color:transparent; }
+        .badge-guide{ background:var(--primary); color:#fff; border-color:transparent; }
+        .doi-tag{ font-size:.7rem; background:var(--bg-card); color:var(--primary); padding:.2rem .55rem; border-radius:3px; text-decoration:none; border:1px solid var(--primary); font-weight:600; display:inline-flex; gap:.35rem; align-items:center; vertical-align:middle; margin-left:.5rem; transition:all .2s ease; }
+        .doi-tag:hover{ background:var(--primary); color:#fff; }
+
+        /* --- ANNOUNCEMENTS --- */
+        .announcement-box{ background:var(--bg-card); border:1px solid var(--border-color); border-left:4px solid var(--primary); border-radius:var(--radius-md); padding:1.9rem 2rem; box-shadow:var(--shadow-sm); height:100%; }
+        .announcement-box h3{ font-family:'Fraunces',serif; color:var(--heading-color); font-size:1.4rem; margin-bottom:1.2rem; display:flex; align-items:center; gap:.6rem; }
+        .announcement-box h3 i{ color:var(--accent); }
+        .announcement-list{ list-style:none; }
+        .announcement-list li{ display:flex; gap:.8rem; align-items:flex-start; padding:.75rem 0; border-bottom:1px dashed var(--border-color); font-size:.98rem; color:var(--text-main); line-height:1.55; }
+        .announcement-list li:last-child{ border-bottom:none; }
+        .announcement-list a{ color:var(--primary); font-weight:600; text-decoration:none; border-bottom:1px solid transparent; transition:border-color .2s ease; }
+        .announcement-list a:hover{ border-bottom-color:var(--primary); }
+        .pulse-badge{ background:var(--danger); color:#fff; font-size:.6rem; font-weight:700; padding:.25rem .5rem; border-radius:3px; letter-spacing:.08em; white-space:nowrap; animation:pulse 2s infinite; }
+        @keyframes pulse{ 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.08); opacity:.85; } }
+
+        /* --- TIMELINE --- */
+        .timeline{ border-left:2px solid var(--border-color); padding-left:1.9rem; margin-left:.5rem; }
+        .timeline-item{ position:relative; margin-bottom:2rem; }
+        .timeline-item:last-child{ margin-bottom:0; }
+        .timeline-item::before{ content:''; position:absolute; left:-2.3rem; top:.35rem; width:11px; height:11px; border-radius:50%; background:var(--bg-card); border:3px solid var(--primary); box-shadow:0 0 0 4px var(--primary-light); }
+        .timeline-date{ display:inline-block; font-size:.74rem; font-weight:600; letter-spacing:.05em; color:var(--primary-dark); background:var(--primary-light); padding:.3rem .8rem; border-radius:4px; margin-bottom:.55rem; }
+
+        /* --- NUMBERED PUBLICATION LISTS --- */
+        ol.numbered-list{ padding-left:0; margin:0; counter-reset:custom-counter var(--start); list-style:none; }
+        ol.numbered-list li{ counter-increment:custom-counter -1; padding:1.3rem 0 1.3rem 3.4rem; border-bottom:1px solid var(--border-color); position:relative; font-weight:600; color:var(--heading-color); font-size:1.02rem; line-height:1.5; }
+        ol.numbered-list li::before{ content:counter(custom-counter); position:absolute; left:0; top:1.2rem; font-family:'Fraunces',serif; font-weight:600; font-size:.92rem; color:var(--primary); background:var(--primary-light); width:2.1rem; height:2.1rem; display:flex; align-items:center; justify-content:center; border-radius:50%; }
+        ol.numbered-list li:last-child{ border-bottom:none; }
+        .pub-meta{ font-size:.9rem; color:var(--text-muted); font-weight:400; margin-top:.55rem; line-height:1.5; }
+        .pub-journal{ font-size:.9rem; color:var(--secondary); margin-top:.35rem; font-weight:600; }
+
+        .pub-card{ padding:1.2rem 2rem; }
+        .auto-scroll-container{ max-height:560px; overflow-y:auto; padding-right:14px; scroll-behavior:smooth; scrollbar-width:thin; scrollbar-color:var(--primary) var(--band); }
+        .auto-scroll-container::-webkit-scrollbar{ width:8px; }
+        .auto-scroll-container::-webkit-scrollbar-track{ background:var(--band); border-radius:4px; }
+        .auto-scroll-container::-webkit-scrollbar-thumb{ background:linear-gradient(var(--primary),var(--primary-dark)); border-radius:4px; }
+        .auto-scroll-container::-webkit-scrollbar-thumb:hover{ background:linear-gradient(var(--accent),var(--accent-dark)); }
+        .scroll-note{ text-align:center; color:var(--primary); font-size:.82rem; margin-top:1rem; }
+
+        /* --- STANDARD CHECK LISTS --- */
+        .standard-list{ list-style:none; }
+        .standard-list li{ display:flex; gap:.75rem; align-items:flex-start; padding:.6rem 0; border-bottom:1px dashed var(--border-color); font-size:.98rem; color:var(--text-main); }
+        .standard-list li:last-child{ border-bottom:none; }
+        .standard-list li i{ color:var(--accent); margin-top:.3rem; }
+
+        /* --- PEOPLE: horizontal rows (photo left, details right) --- */
+        .people-list{ display:flex; flex-direction:column; gap:1.05rem; }
+        .person-row{
+            display:flex; align-items:center; gap:1.4rem;
+            background:var(--bg-card);
+            border:1px solid var(--border-color);
+            border-left:4px solid var(--accent);
+            border-radius:var(--radius-md);
+            padding:1.2rem 1.6rem;
+            box-shadow:var(--shadow-sm);
+            transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+        }
+        .person-row:hover{ transform:translateX(5px); box-shadow:var(--shadow-md); border-left-color:#f4c20d; }
+        .person-photo{
+            width:104px; height:104px; flex:0 0 104px;
+            border-radius:14px; object-fit:cover; display:block;
+            border:2px solid var(--primary-light);
+            background:var(--bg-body); box-shadow:var(--shadow-sm);
+            transition:transform .28s ease, border-color .28s ease;
+        }
+        .person-photo-link{ display:block; flex:0 0 auto; line-height:0; }
+        .person-row:hover .person-photo{ border-color:var(--accent); transform:scale(1.04); }
+        .person-info{ flex:1; min-width:0; text-align:left; }
+        .person-name{ font-family:'Fraunces',serif; font-size:1.22rem; color:var(--heading-color); margin:0 0 .55rem; line-height:1.25; }
+        .person-name-link{ color:var(--heading-color); text-decoration:none; transition:color .25s ease; }
+        .person-name-link i{ font-size:.62em; color:var(--accent-dark); margin-left:.32rem; opacity:.75; vertical-align:middle; }
+        .person-name-link:hover{ color:var(--primary); }
+        .person-badges{ display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:.45rem; }
+        .person-badges .badge{ margin:0; }
+        .person-topic{ font-size:.9rem; color:var(--text-main); margin:0; line-height:1.5; }
+
+        /* --- PROJECT LOGO --- */
+        .project-logo{ width:64px; height:64px; object-fit:contain; background:#fff; border:1px solid var(--border-color); border-radius:8px; padding:5px; box-shadow:var(--shadow-sm); }
+
+        /* --- CONSULTANCY MARQUEE --- */
+        .logo-marquee-container{ overflow:hidden; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:2.2rem 0; position:relative; box-shadow:var(--shadow-sm); }
+        .logo-marquee-container::before,.logo-marquee-container::after{ content:''; position:absolute; top:0; width:110px; height:100%; z-index:2; pointer-events:none; }
+        .logo-marquee-container::before{ left:0; background:linear-gradient(to right,var(--bg-card),transparent); }
+        .logo-marquee-container::after{ right:0; background:linear-gradient(to left,var(--bg-card),transparent); }
+        .logo-marquee-track{ display:flex; align-items:center; gap:5rem; width:max-content; animation:scrollMarquee 35s linear infinite; }
+        .logo-marquee-track:hover{ animation-play-state:paused; }
+        .marquee-logo{ height:82px; max-width:200px; object-fit:contain; filter:grayscale(100%) opacity(.72); transition:all .4s ease; }
+        .marquee-logo:hover{ filter:none; transform:scale(1.05); }
+        @keyframes scrollMarquee{ to{ transform:translateX(calc(-50% - 2.5rem)); } }
+
+        /* --- LAB CAROUSEL --- */
+        .lab-tabs{ display:flex; flex-wrap:wrap; gap:.6rem; justify-content:center; margin-bottom:2.2rem; }
+        .lab-tab{ padding:.55rem 1.15rem; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-main); border-radius:30px; font-size:.82rem; font-weight:500; cursor:pointer; transition:all .25s ease; box-shadow:var(--shadow-sm); }
+        .lab-tab.active,.lab-tab:hover{ background:var(--primary); color:#fff; border-color:var(--primary); transform:translateY(-2px); }
+        .lab-carousel-wrapper{ overflow:hidden; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:2.5rem 0; position:relative; white-space:nowrap; box-shadow:var(--shadow-md); }
+        .lab-carousel-wrapper::before,.lab-carousel-wrapper::after{ content:''; position:absolute; top:0; width:130px; height:100%; z-index:2; pointer-events:none; }
+        .lab-carousel-wrapper::before{ left:0; background:linear-gradient(to right,var(--bg-card),transparent); }
+        .lab-carousel-wrapper::after{ right:0; background:linear-gradient(to left,var(--bg-card),transparent); }
+        .lab-track{ display:flex; gap:1.8rem; width:max-content; padding:0 2rem; animation:labScroll 40s linear infinite; }
+        .lab-track:hover{ animation-play-state:paused; }
+        .lab-card{ width:300px; height:330px; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border-color); background:#fff; display:flex; flex-direction:column; white-space:normal; box-shadow:var(--shadow-sm); transition:transform .4s ease, box-shadow .4s ease; }
+        .lab-card:hover{ transform:translateY(-6px) scale(1.01); box-shadow:var(--shadow-hover); }
+        .lab-img{ width:100%; height:215px; object-fit:cover; border-bottom:3px solid var(--accent); background:var(--bg-body); }
+        .lab-title{ font-family:'Fraunces',serif; padding:1.1rem; font-weight:600; font-size:.98rem; text-align:center; color:var(--heading-color); flex:1; display:flex; align-items:center; justify-content:center; line-height:1.35; }
+        @keyframes labScroll{ to{ transform:translateX(calc(-50% - .9rem)); } }
+
+        /* --- GALLERY --- */
+        .gallery-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:1.4rem; }
+        .gallery-card{ margin:0; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); overflow:hidden; box-shadow:var(--shadow-sm); transition:transform .3s ease, box-shadow .3s ease; }
+        .gallery-card:hover{ transform:translateY(-5px); box-shadow:var(--shadow-md); }
+        .gallery-card img{ width:100%; height:190px; object-fit:cover; display:block; background:var(--bg-body); border-bottom:3px solid var(--accent); }
+        .gallery-card figcaption{ padding:1rem 1.1rem 1.2rem; }
+        .gallery-cap{ font-family:'Fraunces',serif; font-weight:600; color:var(--heading-color); font-size:1.02rem; line-height:1.35; }
+        .gallery-date{ font-size:.72rem; color:var(--text-muted); margin-top:.35rem; display:flex; gap:.4rem; align-items:center; }
+        .gallery-tags{ margin-top:.7rem; display:flex; flex-wrap:wrap; gap:.4rem; }
+        .gallery-tag{ font-size:.64rem; font-weight:600; letter-spacing:.05em; background:var(--primary-light); color:var(--primary-dark); padding:.2rem .5rem; border-radius:3px; text-transform:uppercase; }
+
+        /* --- INFO CARDS (honors / activities) --- */
+        .info-card{ padding:0; overflow:hidden; display:flex; flex-direction:column; }
+        .info-card::before{ display:none; }
+        .info-card-img{ width:100%; height:185px; object-fit:cover; background:var(--bg-body); border-bottom:3px solid var(--accent); }
+        .info-card-icon{ width:100%; height:120px; display:flex; align-items:center; justify-content:center; background:var(--primary-light); color:var(--primary); font-size:2.2rem; border-bottom:3px solid var(--accent); }
+        .info-card-body{ padding:1.5rem; flex:1; }
+        .info-card-body h3{ font-size:1.15rem; margin-bottom:.5rem; }
+        .info-card-body p{ font-size:.95rem; color:var(--text-main); margin:0; line-height:1.6; }
+
+        /* --- RESEARCH GROUP CARDS --- */
+        .prg-title{ font-family:'Fraunces',serif; display:flex; align-items:center; gap:.6rem; font-size:1.2rem; color:var(--heading-color); padding-bottom:.9rem; margin-bottom:1rem; border-bottom:2px solid var(--border-color); }
+        .prg-title i{ color:var(--accent); }
+        .prg-desc{ font-size:.92rem; color:var(--text-muted); margin-bottom:1.1rem; line-height:1.55; }
+        .prg-list{ list-style:none; }
+        .prg-list li{ display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:.65rem 0; border-bottom:1px solid var(--border-color); }
+        .prg-list li:last-child{ border-bottom:none; }
+        .prg-member{ font-weight:600; color:var(--heading-color); font-size:.95rem; }
+        .prg-time{ font-size:.72rem; font-weight:600; color:var(--primary-dark); background:var(--primary-light); padding:.28rem .62rem; border-radius:4px; white-space:nowrap; }
+
+        /* --- CONTACT --- */
+        .contact-info p{ display:flex; gap:1rem; align-items:flex-start; margin-bottom:1.3rem; font-size:1rem; color:var(--text-main); }
+        .contact-info i{ color:var(--primary); font-size:1.2rem; width:22px; text-align:center; margin-top:.2rem; }
+
+        /* --- JOIN CTA --- */
+        .cta{ text-align:center; background:linear-gradient(135deg,var(--ink) 0%,#3c3024 100%); color:var(--paper); border:none; padding:3.6rem 2rem; }
+        .cta::before{ display:none; }
+        .cta:hover{ transform:none; }
+        .cta h3{ color:#fff; font-size:1.9rem; margin-bottom:1rem; }
+        .cta p{ color:#d9cdba; margin-bottom:2rem; font-size:1.05rem; }
+        .cta .btn-secondary{ background:#fff; color:var(--ink); border-color:#fff; }
+
+        .sheet-status{ font-size:.9rem; }
+
+        /* --- FOOTER --- */
+        footer{ background:var(--ink); color:#b6a892; text-align:center; padding:3rem 2rem; border-top:4px solid var(--accent); }
+        footer strong{ color:#fff; font-family:'Fraunces',serif; font-weight:600; }
+        footer .foot-sub{ font-size:.9rem; margin-top:.4rem; }
+
+        /* --- AMBIENT PARTICLE FIELD ---
+           A single fixed canvas painted behind all content. It sits above the
+           body's paper background but below every section (which carry their own
+           z-index:1 stacking), so motes drift through the warm "paper" areas and
+           are naturally occluded by opaque cards / dark bands. */
+        #fxCanvas{ position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; opacity:1; }
+        main{ position:relative; z-index:1; }
+        footer{ position:relative; z-index:1; }
+
+        /* --- SCROLL REVEAL --- */
+        .reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+        .reveal.in{ opacity:1; transform:none; }
+        @media (prefers-reduced-motion:reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width:920px){
+            .menu-toggle{ display:block; }
+            .main-nav{ position:fixed; top:0; right:0; height:100vh; width:min(290px,82vw); background:var(--bg-card); box-shadow:-10px 0 34px rgba(0,0,0,.16); flex-direction:column; align-items:stretch; gap:.15rem; padding:4.8rem 1.2rem 2rem; transform:translateX(100%); transition:transform .32s ease; z-index:1100; overflow-y:auto; }
+            .main-nav.open{ transform:none; }
+            .main-nav a{ width:100%; padding:.85rem 1rem; font-size:.96rem; border-radius:8px; color:var(--text-main); background:transparent; }
+            .main-nav a:hover{ color:var(--primary); background:var(--primary-light); }
+            .main-nav a.active{ color:var(--primary); }
+            .main-nav a.active::after{ left:1rem; right:auto; width:18px; bottom:.55rem; background:var(--accent); }
+            .hero{ padding:3.5rem 0 4rem; }
+            .hero-grid{ grid-template-columns:1fr; text-align:center; gap:2.5rem; }
+            .hero-photo{ order:-1; }
+            .hero-text .eyebrow{ margin-left:auto; margin-right:auto; }
+            .hero-actions{ justify-content:center; }
+            .lede{ margin-left:auto; margin-right:auto; }
+            .two-col{ grid-template-columns:1fr; }
+        }
+        @media (max-width:600px){
+            .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr; }
+            .stats-grid{ grid-template-columns:repeat(2,1fr); }
+            .section{ padding:3.6rem 0; }
+            .wrap{ padding:0 1.3rem; }
+            .header-inner{ padding:.75rem 1.3rem; }
+            .pub-card{ padding:1rem 1.2rem; }
+            .sub-head h3{ font-size:1.3rem; }
+            .person-row{ flex-direction:column; text-align:center; gap:1rem; padding:1.4rem 1.2rem; }
+            .person-info{ text-align:center; }
+            .person-badges{ justify-content:center; }
+        }
+    </style>
+</head>
+<body style="background-color: rgb(217, 200, 170)">
+
+    <canvas id="fxCanvas" aria-hidden="true"></canvas>
+
+    <header class="site-header" id="siteHeader">
+        <svg class="road-markings" viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true">
+            <line class="road-edge" x1="0" y1="8"  x2="1200" y2="8"></line>
+            <line class="road-lane" x1="0" y1="40" x2="1200" y2="40"></line>
+            <line class="road-edge" x1="0" y1="72" x2="1200" y2="72"></line>
+        </svg>
+        <div class="header-inner">
+            <a class="wordmark" onclick="navTo('home')">Aniket&nbsp;V.&nbsp;Kataware<span>Pavement Engineering · IIT Dharwad</span></a>
+            <button class="menu-toggle" id="menuToggle" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+            <nav class="main-nav" id="mainNav">
+                <a class="active" data-target="home" onclick="navTo('home')">Home</a>
+                <a data-target="about" onclick="navTo('about')">About</a>
+                <a data-target="teaching" onclick="navTo('teaching')">Teaching</a>
+                <a data-target="research" onclick="navTo('research')">Research</a>
+                <a data-target="publications" onclick="navTo('publications')">Publications</a>
+                <a data-target="students" onclick="navTo('students')">Students</a>
+                <a data-target="recognition" onclick="navTo('recognition')">Recognition</a>
+                <a data-target="gallery" onclick="navTo('gallery')">Gallery</a>
+                <a data-target="contact" onclick="navTo('contact')">Contact</a>
+            </nav>
+        </div>
+    </header>
+    <div class="nav-backdrop" id="navBackdrop"></div>
+
+    <main>
+
+        <!-- ============================ HERO / HOME ============================ -->
+        <section id="home" class="hero view-active">
+            <div class="wrap hero-grid">
+                <div class="hero-text">
+                    <span class="eyebrow">Assistant Professor · Civil &amp; Infrastructure Engineering</span>
+                    <h1 class="display">Dr. Aniket<br>V. Kataware</h1>
+                    <p class="lede">Department of Civil and Infrastructure Engineering, Indian Institute of Technology Dharwad — researching asphalt materials, binder rheology, and sustainable, resilient pavements.</p>
+                    <div class="hero-actions">
+                        <a href="https://scholar.google.com/citations?user=GXYFqtMAAAAJ&hl=en" target="_blank" class="btn"><i class="fa-brands fa-google"></i> Google Scholar</a>
+                        <a href="https://www.linkedin.com/in/dr-aniket-vasantrao-kataware-10870359/" target="_blank" class="btn btn-outline"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+                    </div>
+                </div>
+                <div class="hero-photo">
+                    <img src="https://drive.google.com/thumbnail?id=1vvduaB7v8M5JuD3bebIA0xvMDgUP7w7T&sz=w800" alt="Dr. Aniket Kataware" onerror="this.src='https://images.unsplash.com/photo-1549692520-acc6669e2f0c?q=80&w=800&auto=format&fit=crop'">
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================ STATS BAND ============================ -->
+        <section id="homeStats" class="stats-band view-active">
+            <div class="wrap">
+                <div class="stats-grid" id="statsGrid"></div>
+            </div>
+        </section>
+
+        <!-- ===================== ANNOUNCEMENTS + FOCUS ===================== -->
+        <section id="homeIntro" class="section view-active">
+            <div class="wrap two-col">
+                <div class="announcement-box reveal">
+                    <h3><i class="fa-solid fa-bullhorn"></i> Announcements</h3>
+                    <ul class="announcement-list" id="announcementList"></ul>
+                </div>
+                <div class="reveal">
+                    <span class="eyebrow">Research Focus</span>
+                    <h2 class="display" style="font-size:2.1rem; margin-bottom:1rem;">What I work on</h2>
+                    <p class="lead-text">My research focuses on Hot and Warm Mix Asphalt, Asphalt Binder Rheology, Pavement Materials &amp; evaluation, Pavement Management System, Recycled Asphalt Pavements, Concrete Pavements, Sustainable and Resilient Pavements, Pavement Design and Analysis, Pavement Rehabilitation, and Non-destructive Pavement Testing.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================ ABOUT ============================ -->
+        <section id="about" class="section band">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">About Me</span>
+                    <h2 class="display">Biography</h2>
+                </div>
+                <div class="card reveal mb-3">
+                    <p style="margin-bottom:1rem;">I am an Assistant Professor in the Department of Civil and Infrastructure Engineering at Indian Institute of Technology Dharwad, Karnataka. I completed my M.Tech in Civil Engineering from IIT Kharagpur and Ph.D in Civil Engineering from Indian Institute of Technology Bombay, India.</p>
+                    <p>My current research interests include Hot and Warm Mix Asphalt, Asphalt Binder Rheology, Pavement Materials &amp; evaluation, Pavement Management System, Recycled Asphalt Pavements, Concrete Pavements, Sustainable and Resilient Pavements, Pavement Design and Analysis, Pavement Rehabilitation, and Non-destructive Pavement Testing.</p>
+                </div>
+                <div class="grid-2 reveal">
+                    <div class="card">
+                        <h3 style="margin-bottom:1.8rem; color:var(--primary);"><i class="fa-solid fa-graduation-cap"></i> Education</h3>
+                        <div class="timeline">
+                            <div class="timeline-item"><div class="timeline-date">2013 — 2018</div><h3>Ph.D. Civil Engineering</h3><p style="margin:0;">IIT Bombay, India</p></div>
+                            <div class="timeline-item"><div class="timeline-date">2010 — 2012</div><h3>M.Tech. Civil Engineering</h3><p style="margin:0;">IIT Kharagpur, India</p></div>
+                            <div class="timeline-item"><div class="timeline-date">2005 — 2009</div><h3>B.E. Civil Engineering</h3><p style="margin:0;">WCE, Sangli, Maharashtra</p></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 style="margin-bottom:1.8rem; color:var(--primary);"><i class="fa-solid fa-briefcase"></i> Experience (8+ Years)</h3>
+                        <div class="timeline">
+                            <div class="timeline-item"><div class="timeline-date">2022 — Present</div><h3>Assistant Professor</h3><p style="margin:0;">IIT Dharwad</p></div>
+                            <div class="timeline-item"><div class="timeline-date">2020 — 2022</div><h3>R&amp;D Manager</h3><p style="margin:0;">L&amp;T Construction TI IC</p></div>
+                            <div class="timeline-item"><div class="timeline-date">2018 — 2020</div><h3>Deputy Consultant</h3><p style="margin:0;">SOWiL Limited</p></div>
+                            <div class="timeline-item"><div class="timeline-date">2018</div><h3>Research Associate</h3><p style="margin:0;">IIT Bombay</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================ TEACHING ============================ -->
+        <section id="teaching" class="section">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">In the Classroom</span>
+                    <h2 class="display">Courses Taught</h2>
+                </div>
+                <div class="grid-3 reveal" id="teachingGrid"></div>
+            </div>
+        </section>
+
+        <!-- ============================ RESEARCH ============================ -->
+        <section id="research" class="section band">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Research &amp; Facilities</span>
+                    <h2 class="display">Projects, Lab &amp; Group</h2>
+                </div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-flask-vial"></i> Sponsored Research Projects (R&amp;D)</h3></div>
+                <div class="grid-2 reveal" id="projectsGrid"></div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-handshake-angle"></i> Major Consultancy Projects</h3></div>
+                <div class="logo-marquee-container reveal">
+                    <div class="logo-marquee-track" id="consultancyTrack"></div>
+                </div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-microscope"></i> PERG Laboratory Facilities</h3></div>
+                <p class="lead-text reveal mb-3">The Pavement Engineering Research Group (PERG) is equipped with state-of-the-art facilities to conduct advanced research and evaluation of pavement materials. Explore the equipment categories below.</p>
+                <div class="lab-tabs reveal" id="labTabs"></div>
+                <div class="lab-carousel-wrapper reveal">
+                    <div class="lab-track" id="labTrack"></div>
+                </div>
+                <p class="center" style="color:var(--text-muted); font-size:.9rem; margin-top:1rem;"><em>Hover over the scrolling gallery to pause and view equipment details.</em></p>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-people-group"></i> Research Group (PERG)</h3></div>
+                <p class="lead-text reveal mb-3">Our research is organised into focused sub-groups. Each card lists the team working under that theme along with their timelines.</p>
+                <div class="grid-3 reveal" id="prgGroupGrid"></div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-calendar-check"></i> Special Activities</h3></div>
+                <div class="grid-3 reveal" id="activitiesGrid"></div>
+            </div>
+        </section>
+
+        <!-- ============================ PUBLICATIONS ============================ -->
+        <section id="publications" class="section">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Scholarship</span>
+                    <h2 class="display">Publications &amp; Patents</h2>
+                </div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-lightbulb"></i> Patents Filed</h3></div>
+                <div class="card pub-card reveal mb-3">
+                    <div class="auto-scroll-container" id="patentScroll"></div>
+                </div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-book-journal-whills"></i> Journal Publications (<span id="journalCount">40</span>)</h3></div>
+                <div class="card pub-card reveal">
+                    <div class="auto-scroll-container" id="journalScroll"></div>
+                    <p class="scroll-note"><em>Scroll within the list to view all entries</em></p>
+                </div>
+                <div class="center mt-2 reveal">
+                    <a href="https://scholar.google.com/citations?user=GXYFqtMAAAAJ&hl=en" target="_blank" class="btn"><i class="fa-brands fa-google"></i> View Google Scholar Profile for Full List</a>
+                </div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-users-rectangle"></i> Conference Proceedings (<span id="confCount">16</span>)</h3></div>
+                <div class="card pub-card reveal">
+                    <div class="auto-scroll-container" id="confScroll"></div>
+                    <p class="scroll-note"><em>Scroll within the list to view all entries</em></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================ TEAM ============================ -->
+        <section id="team" class="section band">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">People</span>
+                    <h2 class="display">Students &amp; Scholars</h2>
+                </div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-user-graduate"></i> Ph.D. Scholars</h3></div>
+                <div class="people-list reveal" id="teamGrid"></div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-graduation-cap"></i> M.Tech. Students</h3></div>
+                <div class="people-list reveal" id="mtechGrid"></div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-school"></i> B.Tech. Students</h3></div>
+                <div class="people-list reveal" id="btechGrid"></div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-user-clock"></i> Research Interns</h3></div>
+                <div class="people-list reveal" id="internsGrid"></div>
+
+                <div class="card cta reveal" style="margin-top:3.5rem;">
+                    <h3><i class="fa-solid fa-rocket" style="color:var(--accent);"></i> Join the Research Group</h3>
+                    <p>05 PhD positions available for the July 2026 intake. Email your CV to <strong style="color:#fff;"><a href="mailto:aniket.kataware@iitdh.ac.in" style="color:#fff; text-decoration:underline;">aniket.kataware@iitdh.ac.in</a></strong>.</p>
+                    <div style="display:flex; flex-wrap:wrap; gap:1.2rem; justify-content:center;">
+                        <a href="https://www.iitdh.ac.in/phd" target="_blank" class="btn btn-secondary"><i class="fa-solid fa-graduation-cap"></i> Apply for Ph.D.</a>
+                        <a href="https://iitdh.ac.in/research-associates-ra-opportunities" target="_blank" class="btn btn-outline" style="color:#fff; border-color:rgba(255,255,255,.5);"><i class="fa-solid fa-flask"></i> Post-Doc / RA</a>
+                        <a href="https://iitdh.ac.in/other-recruitments" target="_blank" class="btn btn-outline" style="color:#fff; border-color:rgba(255,255,255,.5);"><i class="fa-solid fa-briefcase"></i> Project Staff</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================ RECOGNITION ============================ -->
+        <section id="recognition" class="section">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Recognition</span>
+                    <h2 class="display">Honors, Talks &amp; Service</h2>
+                </div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-trophy"></i> Honors &amp; Awards</h3></div>
+                <div class="grid-3 reveal" id="honorsGrid"></div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-microphone-lines"></i> Invited Lectures &amp; Keynotes (12+)</h3></div>
+                <div class="card pub-card reveal">
+                    <div class="auto-scroll-container" id="talksScroll"></div>
+                    <p class="scroll-note"><em>Scroll within the list to view all entries</em></p>
+                </div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-id-card"></i> Memberships, Committees &amp; Workshops</h3></div>
+                <div class="grid-3 reveal" id="outreachGrid"></div>
+            </div>
+        </section>
+
+        <!-- ============================ GALLERY & NEWS ============================ -->
+        <section id="gallery" class="section band">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Media</span>
+                    <h2 class="display">Gallery &amp; News</h2>
+                </div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-newspaper"></i> Latest News</h3></div>
+                <div class="grid-2 reveal" id="newsGrid"></div>
+
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-images"></i> Image Gallery</h3></div>
+                <div class="gallery-grid reveal" id="galleryGrid"></div>
+            </div>
+        </section>
+
+        <!-- ============================ CONTACT ============================ -->
+        <section id="contact" class="section">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Get in Touch</span>
+                    <h2 class="display">Contact</h2>
+                </div>
+                <div class="grid-2 reveal mb-3">
+                    <div class="card">
+                        <h3 style="margin-bottom:1.4rem; color:var(--primary); font-size:1.35rem;">Office Address</h3>
+                        <div class="contact-info">
+                            <p><i class="fa-solid fa-building"></i> <span>136, Academic Block 1 (A1), Engineering Building<br>Department of Civil and Infrastructure Engineering</span></p>
+                            <p><i class="fa-solid fa-map-location-dot"></i> <span>Indian Institute of Technology Dharwad<br>Permanent Campus (PC), Chikkamalligawad<br>Dharwad – 580 011, Karnataka, India</span></p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 style="margin-bottom:1.4rem; color:var(--primary); font-size:1.35rem;">Reach Me</h3>
+                        <div class="contact-info">
+                            <p><i class="fa-solid fa-envelope"></i> <span><a href="mailto:aniket.kataware@iitdh.ac.in" style="color:inherit; text-decoration:none;">aniket.kataware@iitdh.ac.in</a><br><a href="mailto:aniket.kataware@gmail.com" style="color:inherit; text-decoration:none;">aniket.kataware@gmail.com</a></span></p>
+                            <p><i class="fa-solid fa-phone"></i> <span>(+91) 9975109110</span></p>
+                        </div>
+                        <div style="margin-top:1.6rem; display:flex; gap:1rem; flex-wrap:wrap;">
+                            <a href="https://www.linkedin.com/in/dr-aniket-vasantrao-kataware-10870359/" target="_blank" class="btn btn-outline"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+                            <a href="https://www.researchgate.net/profile/Aniket-Kataware" target="_blank" class="btn btn-outline"><i class="fa-brands fa-researchgate"></i> ResearchGate</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card reveal">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.5rem;">
+                        <div>
+                            <h3 style="color:var(--heading-color); margin-bottom:.4rem; font-size:1.3rem;">Lecture Notes &amp; Materials</h3>
+                            <p style="margin:0; font-size:1.02rem;">Access class materials and slides for current courses (Updated Jan 2026).</p>
+                        </div>
+                        <a href="https://www.google.com" target="_blank" class="btn"><i class="fa-brands fa-google-drive"></i> Access Drive Folder</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p><strong>© 2026 Dr. Aniket Vasantrao Kataware.</strong> All Rights Reserved.</p>
+        <p class="foot-sub">Indian Institute of Technology Dharwad (IITDH)</p>
+    </footer>
+
+    <script>
+        /* ============================================================
+           GOOGLE SHEETS LOADER  (identical to p.html — same Sheet,
+           same tabs, same renderers and container IDs, so this
+           alternate layout shows exactly the same live content)
+           ============================================================ */
+        const CONFIG = {
+            sheetId: '1jIgyQtBtbKJdLEOKhc2PSRwZgl6ehYe8',
+//https://docs.google.com/spreadsheets/d/1d0sERAc2Y_IwyedBAPtJEOIiOJ_epgn_/edit?usp=sharing&ouid=118158977973989935593&rtpof=true&sd=true
+            tabs: {
+                stats:         'Stats',
+                announcements: 'Announcements',
+                journals:      'Journals',
+                conferences:   'Conferences',
+                projects:      'Projects',
+                consultancy:   'Consultancy',
+                team:          'Team',
+                talks:         'Talks',
+                lab:           'LabEquipment',
+                news:          'News',
+                mtech:         'MTechStudents',
+                btech:         'BTechStudents',
+                interns:       'ResearchInterns',
+                gallery:       'Gallery',
+                honors:        'Honors',
+                activities:    'Activities',
+                perg:          'ResearchGroup',
+                patents:       'Patents',
+                teaching:      'Teaching',
+                outreach:      'Outreach'
+            }
+        };
+
+        /* ---------- small helpers ---------- */
+        function getSheetId(){
+            const raw = (CONFIG.sheetId || '').toString().trim();
+            const m = raw.match(/\/d\/([-\w]{20,})/);
+            return m ? m[1] : raw;
+        }
+        function esc(s){
+            return (s == null ? '' : String(s)).replace(/[&<>"']/g, c => (
+                {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
+            ));
+        }
+        function faClass(icon){
+            icon = (icon || '').toString().trim();
+            if(!icon) return 'fa-solid fa-circle-info';
+            return /fa-(solid|regular|brands|light|thin|duotone)/.test(icon) ? icon : 'fa-solid ' + icon;
+        }
+        function resolveImg(val, size){
+            val = (val || '').toString().trim();
+            if(!val) return '';
+            size = size || 800;
+            if(/^https?:\/\//i.test(val)){
+                const m = val.match(/[-\w]{25,}/);
+                if(/drive\.google\.com/i.test(val) && m) return 'https://drive.google.com/thumbnail?id=' + m[0] + '&sz=w' + size;
+                return val;
+            }
+            if(/^[-\w]{25,}$/.test(val)) return 'https://drive.google.com/thumbnail?id=' + val + '&sz=w' + size;
+            return val;
+        }
+        /* On-brand inline SVG placeholder (replaces the retired via.placeholder.com
+           service so image fallbacks always render, even offline). */
+        function phData(label, w, h){
+            w = w || 400; h = h || 300;
+            label = (label == null ? 'Image' : String(label)).replace(/[<>&"]/g, '').trim() || 'Image';
+            const fs = Math.max(13, Math.round(Math.min(w, h) / 9));
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">' +
+                '<rect width="100%" height="100%" fill="#efe7d9"/>' +
+                '<rect x="1" y="1" width="' + (w - 2) + '" height="' + (h - 2) + '" fill="none" stroke="#e2d6c2" stroke-width="2"/>' +
+                '<text x="50%" y="50%" dy="0.34em" text-anchor="middle" font-family="Inter,Helvetica,Arial,sans-serif" font-size="' + fs + '" font-weight="600" fill="#b4532a" opacity="0.55">' + label + '</text>' +
+                '</svg>';
+            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        }
+        function cellVal(cell){
+            if(!cell) return '';
+            const v = cell.v;
+            if(v == null) return '';
+            if(typeof v === 'string') return (/^Date\(/.test(v) && cell.f != null) ? cell.f : v;
+            if(typeof v === 'number')  return String(v);
+            if(typeof v === 'boolean') return v ? 'TRUE' : 'FALSE';
+            return cell.f != null ? cell.f : String(v);
+        }
+        function gvizToObjects(resp){
+            if(!resp || resp.status === 'error'){
+                throw new Error(resp && resp.errors ? (resp.errors[0].detailed_message || resp.errors[0].message) : 'gviz error');
+            }
+            const table = resp.table || { cols: [], rows: [] };
+            const cols = (table.cols || []).map(c => (c.label || '').toString().trim());
+            return (table.rows || []).map(r => {
+                const obj = {};
+                (r.c || []).forEach((cell, i) => {
+                    const key = cols[i] || ('col' + i);
+                    if(key) obj[key] = cellVal(cell);
+                });
+                return obj;
+            });
+        }
+        let gvizCounter = 0;
+        function gvizFetch(sheetName){
+            return new Promise((resolve, reject) => {
+                const cb = 'gvizCb_' + (gvizCounter++);
+                const url = 'https://docs.google.com/spreadsheets/d/' + getSheetId() +
+                            '/gviz/tq?sheet=' + encodeURIComponent(sheetName) +
+                            '&headers=1&tqx=out:json;responseHandler:' + cb;
+                const script = document.createElement('script');
+                let done = false;
+                const cleanup = () => { try { delete window[cb]; } catch(e) { window[cb] = undefined; } script.remove(); };
+                const timer = setTimeout(() => { if(!done){ done = true; cleanup(); reject(new Error('timeout: ' + sheetName)); } }, 15000);
+                window[cb] = (resp) => {
+                    if(done) return;
+                    done = true; clearTimeout(timer); cleanup();
+                    try { resolve(gvizToObjects(resp)); } catch(e) { reject(e); }
+                };
+                script.onerror = () => { if(!done){ done = true; clearTimeout(timer); cleanup(); reject(new Error('network error: ' + sheetName)); } };
+                script.src = url;
+                document.head.appendChild(script);
+            });
+        }
+
+        /* ---------- section renderers ---------- */
+        const SECTION_COUNTS = {};
+        let STAT_ROWS = null;
+        const STAT_COUNT_TAB = {
+            'journals':'journals', 'journal publications':'journals',
+            'conferences':'conferences', 'conference proceedings':'conferences',
+            'r&d projects':'projects', 'rd projects':'projects', 'projects':'projects',
+            'sponsored research projects':'projects',
+            'consultancy':'consultancy',
+            'invited talks':'talks', 'talks':'talks',
+            'patents':'patents', 'patents filed':'patents',
+            'ph.d. students':'team', 'phd students':'team', 'team':'team'
+        };
+        function statCount(label){
+            const tab = STAT_COUNT_TAB[(label || '').toString().trim().toLowerCase()];
+            return tab ? SECTION_COUNTS[tab] : undefined;
+        }
+        function resolveStatNumber(r){
+            const raw = (r.Number == null ? '' : String(r.Number)).trim();
+            const m = /^auto(\+?)$/i.exec(raw);
+            if(raw && !m) return raw;
+            const c = statCount(r.Label);
+            if(c == null) return raw;
+            return c + (m && m[1] ? '+' : '');
+        }
+        function renderStats(rows){
+            const el = document.getElementById('statsGrid'); if(!el) return;
+            el.innerHTML = rows.map(r => {
+                const target = (r.Target || '').toString().trim();
+                const click = target ? ' onclick="navTo(\'' + esc(target) + '\')" title="' + esc(r.Label || '') + '" style="cursor:pointer;"' : '';
+                return '<div class="card stat-box"' + click + '>' +
+                       '<div class="stat-icon-wrapper"><i class="' + faClass(r.Icon) + '"></i></div>' +
+                       '<div class="stat-number">' + esc(resolveStatNumber(r)) + '</div>' +
+                       '<p class="stat-label">' + esc(r.Label) + '</p></div>';
+            }).join('');
+        }
+        function renderAnnouncements(rows){
+            const el = document.getElementById('announcementList'); if(!el) return;
+            el.innerHTML = rows.map(r => {
+                const text = (r.Text || '').toString();
+                const lt = (r.LinkText || '').toString().trim();
+                const lu = (r.LinkURL || '').toString().trim();
+                const isNew = /^(true|yes|1|new)$/i.test((r.New || '').toString().trim());
+                let body = esc(text);
+                if(lu && lt){
+                    const a = '<a href="' + esc(lu) + '" target="_blank">' + esc(lt) + '</a>';
+                    body = (text.indexOf(lt) !== -1) ? esc(text).replace(esc(lt), a) : (a + ' ' + esc(text));
+                }
+                const badge = isNew ? '<span class="pulse-badge">NEW</span>' : '';
+                return '<li>' + badge + '<i class="fa-solid fa-star" style="color: var(--accent); margin-top: 0.3rem;"></i><div>' + body + '</div></li>';
+            }).join('');
+        }
+        function numberedList(rows, build){
+            return '<ol class="numbered-list" style="--start: ' + (rows.length + 1) + ';">' + rows.map(build).join('') + '</ol>';
+        }
+        function renderJournals(rows){
+            const el = document.getElementById('journalScroll'); if(!el) return;
+            const jc = document.getElementById('journalCount'); if(jc) jc.textContent = rows.length;
+            el.innerHTML = numberedList(rows, r => {
+                const doi = (r.DOI || '').toString().trim();
+                const doiTag = doi ? ' <a href="' + esc(doi) + '" target="_blank" class="doi-tag"><i class="fa-solid fa-link"></i> DOI</a>' : '';
+                const authors = r.Authors ? '<div class="pub-meta">' + esc(r.Authors) + '</div>' : '';
+                const j = (r.Journal || r.Year) ? '<div class="pub-journal">' + esc(r.Journal) + (r.Year ? ' (' + esc(r.Year) + ')' : '') + '</div>' : '';
+                return '<li>' + esc(r.Title) + doiTag + authors + j + '</li>';
+            });
+        }
+        function renderConferences(rows){
+            const el = document.getElementById('confScroll'); if(!el) return;
+            const cc = document.getElementById('confCount'); if(cc) cc.textContent = rows.length;
+            el.innerHTML = numberedList(rows, r => {
+                const authors = r.Authors ? '<div class="pub-meta">' + esc(r.Authors) + '</div>' : '';
+                const v = r.Venue ? '<div class="pub-journal">' + esc(r.Venue) + '</div>' : '';
+                return '<li>' + esc(r.Title) + authors + v + '</li>';
+            });
+        }
+        function renderTalks(rows){
+            const el = document.getElementById('talksScroll'); if(!el) return;
+            el.innerHTML = numberedList(rows, r => {
+                const venue = r.Venue ? '<div class="pub-meta">' + esc(r.Venue) + '</div>' : '';
+                const d = r.Date ? '<div class="pub-journal">' + esc(r.Date) + '</div>' : '';
+                return '<li>' + esc(r.Title) + venue + d + '</li>';
+            });
+        }
+        function renderProjects(rows){
+            const el = document.getElementById('projectsGrid'); if(!el) return;
+            el.innerHTML = rows.map(r => {
+                const logo = (r.Logo || '').toString().trim();
+                const logoEl = logo
+                    ? '<img src="' + esc(resolveImg(logo, 400)) + '" alt="' + esc(r.Agency || '') + '" class="project-logo">'
+                    : '<div class="stat-icon-wrapper" style="margin:0; width:70px; height:70px; background:white; border:1px solid var(--border-color); box-shadow:var(--shadow-sm);"><i class="fa-solid fa-flask"></i></div>';
+                const role = r.Role ? '<span class="badge badge-light">' + esc(r.Role) + '</span>' : '';
+                const dur = r.Duration ? '<span class="badge badge-success">' + esc(r.Duration) + '</span>' : '';
+                const agency = r.Agency ? '<div class="project-agency">Funding Agency: ' + esc(r.Agency) + '</div>' : '';
+                return '<div class="card flex-card"><div class="flex-card-content">' +
+                       '<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">' +
+                       logoEl + '<div>' + dur + ' ' + role + '</div></div>' +
+                       '<h3 style="font-size:1.15rem;">' + esc(r.Title) + '</h3>' + agency + '</div></div>';
+            }).join('');
+        }
+        function renderConsultancy(rows){
+            const el = document.getElementById('consultancyTrack'); if(!el) return;
+            const imgs = rows.map(r => '<img src="' + esc(resolveImg(r.Logo, 400)) + '" alt="' + esc(r.Name) + '" title="' + esc(r.Name) + '" class="marquee-logo">').join('');
+            el.innerHTML = imgs + imgs;
+        }
+        function peopleCards(rows){
+            return rows.map(r => {
+                const name = esc(r.Name);
+                const avatar = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(r.Name || '') + '&background=262019&color=f4c20d&size=200';
+                const photo = (r.Photo || '').toString().trim();
+                const src = photo ? resolveImg(photo, 800) : avatar;
+                const status = (r.Status || '').toString().trim();
+                let sc = 'badge-light';
+                if(/submit|complet|graduat|award|alumni/i.test(status)) sc = 'badge-success';
+                else if(/continu|present|ongoing/i.test(status)) sc = 'badge-warning';
+                const sBadge = status ? '<span class="badge ' + sc + '">' + esc(status) + '</span>' : '';
+                const dBadge = r.Duration ? '<span class="badge badge-light">' + esc(r.Duration) + '</span>' : '';
+                const guide = (r.Guidance || r.Guide || r.GuideRole || r.Supervision || r['Guide/Co-Guide'] || '').toString().trim();
+                const gBadge = guide ? '<span class="badge badge-guide"><i class="fa-solid fa-user-tie"></i> ' + esc(guide) + '</span>' : '';
+                const topic = r.Topic ? '<p class="person-topic"><strong>Topic:</strong> ' + esc(r.Topic) + '</p>' : '';
+                const link = (r.ScholarLink || '').toString().trim();
+                const img = '<img src="' + esc(src) + '" alt="' + name + '" class="person-photo" onerror="this.onerror=null;this.src=\'' + avatar + '\'">';
+                const photoWrap = link
+                    ? '<a href="' + esc(link) + '" target="_blank" class="person-photo-link">' + img + '</a>'
+                    : img;
+                const h = link
+                    ? '<h3 class="person-name"><a href="' + esc(link) + '" target="_blank" class="person-name-link">' + name + ' <i class="fa-solid fa-arrow-up-right-from-square"></i></a></h3>'
+                    : '<h3 class="person-name">' + name + '</h3>';
+                return '<div class="person-row">' +
+                           photoWrap +
+                           '<div class="person-info">' +
+                               h +
+                               '<div class="person-badges">' + gBadge + dBadge + sBadge + '</div>' +
+                               topic +
+                           '</div>' +
+                       '</div>';
+            }).join('');
+        }
+        function renderInto(id, html){ const el = document.getElementById(id); if(el) el.innerHTML = html; }
+        function renderTeam(rows){     renderInto('teamGrid',    peopleCards(rows)); }
+        function renderMtech(rows){    renderInto('mtechGrid',   peopleCards(rows)); }
+        function renderBtech(rows){    renderInto('btechGrid',   peopleCards(rows)); }
+        function renderInterns(rows){  renderInto('internsGrid', peopleCards(rows)); }
+
+        function renderGallery(rows){
+            const el = document.getElementById('galleryGrid'); if(!el) return;
+            el.innerHTML = rows.map(r => {
+                const src = resolveImg((r.Image || '').toString().trim(), 800);
+                const meta = (r.Details || r.Caption || r.Info || r.Meta || '').toString();
+                const parts = meta.split('|').map(s => s.trim());
+                const caption = parts[0] || '';
+                const tags = (parts[1] || '').split(',').map(t => t.trim()).filter(Boolean);
+                const date = parts[2] || '';
+                const tagHtml = tags.length ? '<div class="gallery-tags">' + tags.map(t => '<span class="gallery-tag">' + esc(t) + '</span>').join('') + '</div>' : '';
+                const dateHtml = date ? '<div class="gallery-date"><i class="fa-regular fa-calendar"></i> ' + esc(date) + '</div>' : '';
+                const capHtml = caption ? '<div class="gallery-cap">' + esc(caption) + '</div>' : '';
+                const ph = phData('Image', 400, 300);
+                const figcap = (capHtml || dateHtml || tagHtml) ? '<figcaption>' + capHtml + dateHtml + tagHtml + '</figcaption>' : '';
+                return '<figure class="gallery-card"><img src="' + esc(src || ph) + '" alt="' + esc(caption) +
+                       '" onerror="this.onerror=null;this.src=\'' + ph + '\'">' + figcap + '</figure>';
+            }).join('');
+        }
+
+        function imageInfoCards(rows){
+            return rows.map(r => {
+                const img = (r.Image || '').toString().trim();
+                const title = esc(r.Title || r.Heading || '');
+                const desc = esc(r.Description || r.Text || r.Explanation || '');
+                const ph = phData('Image', 700, 190);
+                const top = img
+                    ? '<img src="' + esc(resolveImg(img, 700)) + '" class="info-card-img" alt="' + title + '" onerror="this.onerror=null;this.src=\'' + ph + '\'">'
+                    : '<div class="info-card-icon"><i class="fa-solid fa-award"></i></div>';
+                return '<div class="card info-card">' + top +
+                       '<div class="info-card-body"><h3>' + title + '</h3><p>' + desc + '</p></div></div>';
+            }).join('');
+        }
+        function renderHonors(rows){     renderInto('honorsGrid',     imageInfoCards(rows)); }
+        function renderActivities(rows){ renderInto('activitiesGrid', imageInfoCards(rows)); }
+
+        function renderPrgGroup(rows){
+            const el = document.getElementById('prgGroupGrid'); if(!el) return;
+            el.innerHTML = rows.map(r => {
+                const group = esc(r.Group || r.Name || r.Title || '');
+                const desc = (r.Description || r.Focus || '') ? '<p class="prg-desc">' + esc(r.Description || r.Focus) + '</p>' : '';
+                const members = (r.Members || r.People || '').toString().split(/[\n;]+/).map(s => s.trim()).filter(Boolean);
+                const list = members.map(m => {
+                    let name = m, time = '';
+                    if(m.indexOf('|') !== -1){ const p = m.split('|'); name = p[0].trim(); time = (p[1] || '').trim(); }
+                    else { const mt = m.match(/^(.*?)\s*\(([^)]*)\)\s*$/); if(mt){ name = mt[1].trim(); time = mt[2].trim(); } }
+                    return '<li><span class="prg-member">' + esc(name) + '</span>' + (time ? '<span class="prg-time">' + esc(time) + '</span>' : '') + '</li>';
+                }).join('');
+                return '<div class="card prg-card"><h3 class="prg-title"><i class="fa-solid fa-people-group"></i> ' + group + '</h3>' +
+                       desc + '<ul class="prg-list">' + list + '</ul></div>';
+            }).join('');
+        }
+        function renderNews(rows){
+            const el = document.getElementById('newsGrid'); if(!el) return;
+            el.innerHTML = rows.map(r =>
+                '<div class="card"><div class="timeline-date" style="margin-bottom:1rem;">' + esc(r.Date) + '</div>' +
+                '<h3 style="font-size:1.2rem;">' + esc(r.Title) + '</h3>' +
+                '<p style="font-size:1rem;">' + esc(r.Text) + '</p></div>'
+            ).join('');
+        }
+
+        /* ---------- laboratory carousel ---------- */
+        let labGroups = null, labOrder = [];
+        function renderLabTabs(order){
+            const tabs = document.getElementById('labTabs'); if(!tabs) return;
+            tabs.innerHTML = order.map((cat, i) =>
+                '<button class="lab-tab' + (i === 0 ? ' active' : '') + '" data-cat="' + esc(cat) + '">' + esc(cat) + '</button>'
+            ).join('');
+            tabs.querySelectorAll('.lab-tab').forEach(b => b.addEventListener('click', () => selectLab(b.dataset.cat)));
+        }
+        function selectLab(cat){
+            document.querySelectorAll('#labTabs .lab-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
+            const items = (labGroups && labGroups[cat]) || [];
+            const phEquip = phData('Equipment', 320, 230);
+            const html = items.map(it => {
+                const img = it.image ? resolveImg(it.image, 600)
+                          : phData((it.name || 'Equipment').substring(0, 22), 320, 230);
+                const counter = it.total ? '<span style="position:absolute;top:8px;right:8px;background:rgba(38,32,25,.85);color:#fff;font-family:monospace;font-size:.66rem;font-weight:600;padding:.2rem .45rem;border-radius:3px;z-index:2;letter-spacing:.5px;">' + it.idx + '/' + it.total + '</span>' : '';
+                return '<div class="lab-card" style="position:relative;">' + counter + '<img src="' + esc(img) + '" class="lab-img" alt="' + esc(it.name) +
+                       '" onerror="this.onerror=null;this.src=\'' + phEquip + '\'">' +
+                       '<div class="lab-title">' + esc(it.name) + '</div></div>';
+            }).join('');
+            const track = document.getElementById('labTrack');
+            track.innerHTML = html + html;
+            track.style.animation = 'none'; track.offsetHeight; track.style.animation = null;
+        }
+        function splitImages(val){
+            return (val || '').toString().split(/[\s,;|]+/).map(x => x.trim()).filter(Boolean);
+        }
+        function applyLabSheet(rows){
+            labGroups = {}; labOrder = [];
+            rows.forEach(r => {
+                const cat = (r.Category || '').toString().trim();
+                const name = (r.Name || '').toString().trim();
+                if(!cat || !name) return;
+                if(!labGroups[cat]){ labGroups[cat] = []; labOrder.push(cat); }
+                const imgs = splitImages(r.Image);
+                if(imgs.length > 1){
+                    imgs.forEach((img, k) => labGroups[cat].push({ name: name, image: img, idx: k + 1, total: imgs.length }));
+                } else {
+                    labGroups[cat].push({ name: name, image: imgs[0] || '' });
+                }
+            });
+            if(!labOrder.length){ setStatus('labTrack', 'fa-circle-info', 'No equipment found in the "' + CONFIG.tabs.lab + '" tab yet.'); return; }
+            renderLabTabs(labOrder);
+            selectLab(labOrder[0]);
+        }
+
+        /* ---------- status helpers ---------- */
+        function statusHTML(icon, text){
+            return '<p class="sheet-status" style="grid-column:1/-1; width:100%; text-align:center; color:var(--text-muted); padding:2rem 1rem; margin:0;">' +
+                   '<i class="fa-solid ' + icon + '"></i> ' + esc(text) + '</p>';
+        }
+        function setStatus(id, icon, text){ const el = document.getElementById(id); if(el) el.innerHTML = statusHTML(icon, text); }
+
+        // Patents — numbered list (Title + application no. + filing date).
+        // Guard: if the Sheet has no "Patents" tab, gviz quietly returns the first
+        // sheet as a fallback; detect the missing column and show a hint instead.
+        function renderPatents(rows){
+            const el = document.getElementById('patentScroll'); if(!el) return;
+            if(!rows.some(r => (r.Title || '').toString().trim())){
+                setStatus('patentScroll', 'fa-circle-info', 'Add a "Patents" tab (columns: Title, Number, Date) to your Google Sheet to list patents here.');
+                return;
+            }
+            el.innerHTML = numberedList(rows, r => {
+                const meta = [];
+                if(r.Number) meta.push('Application No. ' + esc(r.Number));
+                if(r.Date)   meta.push('Filed ' + esc(r.Date));
+                const m = meta.length ? '<div class="pub-meta">' + meta.join(' &nbsp;|&nbsp; ') + '</div>' : '';
+                return '<li>' + esc(r.Title) + m + '</li>';
+            });
+        }
+        // Teaching — course cards (Code, Course, Icon, Description)
+        function renderTeaching(rows){
+            const el = document.getElementById('teachingGrid'); if(!el) return;
+            if(!rows.some(r => (r.Course || '').toString().trim())){
+                setStatus('teachingGrid', 'fa-circle-info', 'Add a "Teaching" tab (columns: Code, Course, Icon, Description) to your Google Sheet to list courses here.');
+                return;
+            }
+            el.innerHTML = rows.map(r => {
+                const code = r.Code ? '<span class="badge badge-light">' + esc(r.Code) + '</span>' : '';
+                const desc = r.Description ? '<p style="font-size:0.95rem; margin-top:0.8rem; margin-bottom:0;">' + esc(r.Description) + '</p>' : '';
+                return '<div class="card">' + code +
+                    '<h3 style="font-size:1.15rem;"><i class="' + faClass(r.Icon) + '" style="color:var(--primary); margin-right:0.5rem;"></i>' + esc(r.Course || '') + '</h3>' +
+                    desc + '</div>';
+            }).join('');
+        }
+        // Outreach — memberships / committees / workshops, grouped by the Category column
+        function renderOutreach(rows){
+            const el = document.getElementById('outreachGrid'); if(!el) return;
+            if(!rows.some(r => (r.Item || '').toString().trim())){
+                setStatus('outreachGrid', 'fa-circle-info', 'Add an "Outreach" tab (columns: Category, Item, Year) to your Google Sheet to list memberships & workshops here.');
+                return;
+            }
+            const order = [], groups = {};
+            rows.forEach(r => {
+                const cat = (r.Category || 'Other').toString().trim();
+                if(!groups[cat]){ groups[cat] = []; order.push(cat); }
+                groups[cat].push(r);
+            });
+            const icons = { 'Memberships':'fa-id-card', 'Committees':'fa-people-arrows', 'Workshops':'fa-bullhorn' };
+            el.innerHTML = order.map(cat => {
+                const items = groups[cat].map(r => {
+                    const yr = r.Year ? ' <span class="badge badge-light" style="margin-left:.4rem;">' + esc(r.Year) + '</span>' : '';
+                    return '<li><i class="fa-solid fa-check"></i> <span>' + esc(r.Item) + yr + '</span></li>';
+                }).join('');
+                const ic = icons[cat] || 'fa-circle-check';
+                return '<div class="card"><h3 style="margin-bottom:1.5rem; color:var(--primary);"><i class="fa-solid ' + ic + '"></i> ' + esc(cat) + '</h3><ul class="standard-list">' + items + '</ul></div>';
+            }).join('');
+        }
+
+        const SECTIONS = [
+            { tab:'stats',         id:'statsGrid',        fn:renderStats,         label:'statistics'           },
+            { tab:'announcements', id:'announcementList', fn:renderAnnouncements, label:'announcements'         },
+            { tab:'journals',      id:'journalScroll',    fn:renderJournals,      label:'journal publications'  },
+            { tab:'conferences',   id:'confScroll',       fn:renderConferences,   label:'conferences'           },
+            { tab:'projects',      id:'projectsGrid',     fn:renderProjects,      label:'projects'              },
+            { tab:'consultancy',   id:'consultancyTrack', fn:renderConsultancy,   label:'consultancy partners'  },
+            { tab:'team',          id:'teamGrid',         fn:renderTeam,          label:'team members'          },
+            { tab:'talks',         id:'talksScroll',      fn:renderTalks,         label:'invited talks'         },
+            { tab:'news',          id:'newsGrid',         fn:renderNews,          label:'news'                  },
+            { tab:'mtech',         id:'mtechGrid',        fn:renderMtech,         label:'M.Tech. students'      },
+            { tab:'btech',         id:'btechGrid',        fn:renderBtech,         label:'B.Tech. students'      },
+            { tab:'interns',       id:'internsGrid',      fn:renderInterns,       label:'research interns'      },
+            { tab:'gallery',       id:'galleryGrid',      fn:renderGallery,       label:'gallery'               },
+            { tab:'honors',        id:'honorsGrid',       fn:renderHonors,        label:'honors & awards'       },
+            { tab:'activities',    id:'activitiesGrid',   fn:renderActivities,    label:'special activities'    },
+            { tab:'perg',          id:'prgGroupGrid',     fn:renderPrgGroup,      label:'research group'        },
+            { tab:'patents',       id:'patentScroll',     fn:renderPatents,       label:'patents'               },
+            { tab:'teaching',      id:'teachingGrid',     fn:renderTeaching,      label:'courses taught'        },
+            { tab:'outreach',      id:'outreachGrid',     fn:renderOutreach,      label:'outreach'              }
+        ];
+
+        /* ---------- master loader ---------- */
+        async function loadAllData(){
+            const T = CONFIG.tabs;
+
+            if(!getSheetId()){
+                SECTIONS.forEach(s => setStatus(s.id, 'fa-circle-info', 'Connect your Google Sheet to load this section.'));
+                setStatus('labTrack', 'fa-circle-info', 'Connect your Google Sheet to load lab equipment.');
+                console.warn('[Sheet] No sheetId set. Paste your Sheet ID into CONFIG.sheetId (top of this script) to load content.');
+                return;
+            }
+
+            SECTIONS.forEach(s => setStatus(s.id, 'fa-spinner fa-spin', 'Loading ' + s.label + '...'));
+            setStatus('labTrack', 'fa-spinner fa-spin', 'Loading lab equipment...');
+
+            await Promise.allSettled(SECTIONS.map(s =>
+                gvizFetch(T[s.tab])
+                    .then(rows => {
+                        if(rows && rows.length){
+                            SECTION_COUNTS[s.tab] = rows.length;
+                            if(s.tab === 'stats') STAT_ROWS = rows;
+                            s.fn(rows);
+                        }
+                        else setStatus(s.id, 'fa-circle-info', 'No ' + s.label + ' found in the "' + T[s.tab] + '" tab yet.');
+                    })
+                    .catch(e => {
+                        console.warn('[Sheet] tab "' + T[s.tab] + '" failed:', e.message);
+                        setStatus(s.id, 'fa-triangle-exclamation', 'Could not load ' + s.label + ' from the Google Sheet.');
+                    })
+            ));
+
+            if(STAT_ROWS) renderStats(STAT_ROWS);
+
+            try {
+                const rows = await gvizFetch(T.lab);
+                if(rows && rows.length) applyLabSheet(rows);
+                else setStatus('labTrack', 'fa-circle-info', 'No equipment found in the "' + T.lab + '" tab yet.');
+            } catch(e){
+                console.warn('[Sheet] "' + T.lab + '" failed:', e.message);
+                setStatus('labTrack', 'fa-triangle-exclamation', 'Could not load lab equipment from the Google Sheet.');
+            }
+        }
+
+        /* ============================================================
+           UI for this layout: SPA view-switching, mobile menu and
+           on-scroll reveal. navTo(id) animates into one of the 9 grouped
+           VIEWS. The same name is used by the sheet's stat boxes, whose
+           "Target" cells (sub-section ids) are mapped to a view below.
+           ============================================================ */
+        // Each nav VIEW -> the section element id(s) it shows.
+        const VIEWS = {
+            home:['home','homeStats','homeIntro'], about:['about'], teaching:['teaching'],
+            research:['research'], publications:['publications'], students:['team'],
+            recognition:['recognition'], gallery:['gallery'], contact:['contact']
+        };
+        // Sub-section ids (e.g. stat "Target" cells) -> the VIEW that contains them.
+        const NAV_ALIAS = {
+            journals:'publications', conferences:'publications', patents:'publications',
+            projects:'research', lab:'research', perg:'research', consultancy:'research', activities:'research',
+            talks:'recognition', honors:'recognition', memberships:'recognition', outreach:'recognition',
+            team:'students', phdscholars:'students', mtech:'students', btech:'students', interns:'students',
+            news:'gallery'
+        };
+        const ALL_VIEW_SECTIONS = Object.values(VIEWS).reduce((a, b) => a.concat(b), []);
+        function navTo(id){
+            const view = VIEWS[id] ? id : (NAV_ALIAS[id] || id);
+            const ids = VIEWS[view]; if(!ids) return;
+            ALL_VIEW_SECTIONS.forEach(sid => { const s = document.getElementById(sid); if(s) s.classList.remove('view-active'); });
+            ids.forEach(sid => {
+                const s = document.getElementById(sid); if(!s) return;
+                void s.offsetWidth;                          // restart the entrance animation
+                s.classList.add('view-active');
+                s.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+            });
+            document.querySelectorAll('.main-nav a').forEach(a => a.classList.toggle('active', a.dataset.target === view));
+            window.scrollTo(0, 0);
+            closeMenu();
+        }
+        function openMenu(){
+            const n = document.getElementById('mainNav'); if(n) n.classList.add('open');
+            const b = document.getElementById('navBackdrop'); if(b) b.classList.add('show');
+        }
+        function closeMenu(){
+            const n = document.getElementById('mainNav'); if(n) n.classList.remove('open');
+            const b = document.getElementById('navBackdrop'); if(b) b.classList.remove('show');
+        }
+        function initUI(){
+            const header = document.getElementById('siteHeader');
+            const toggle = document.getElementById('menuToggle');
+            const backdrop = document.getElementById('navBackdrop');
+            const nav = document.getElementById('mainNav');
+            const links = Array.from(document.querySelectorAll('.main-nav a'));
+
+            if(toggle) toggle.addEventListener('click', () => nav.classList.contains('open') ? closeMenu() : openMenu());
+            if(backdrop) backdrop.addEventListener('click', closeMenu);
+
+            // header shadow on scroll
+            const onScroll = () => { if(header) header.classList.toggle('scrolled', window.scrollY > 8); };
+            window.addEventListener('scroll', onScroll, { passive:true });
+            onScroll();
+
+            // (scroll-spy removed: this is now an SPA; navTo() sets the active nav link)
+
+            // on-scroll reveal (within whichever view is showing)
+            const reveals = Array.from(document.querySelectorAll('.reveal'));
+            if('IntersectionObserver' in window){
+                const ro = new IntersectionObserver((entries, obs) => {
+                    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); } });
+                }, { rootMargin:'0px 0px -8% 0px', threshold:0.06 });
+                reveals.forEach(el => ro.observe(el));
+            } else {
+                reveals.forEach(el => el.classList.add('in'));
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initUI();
+            loadAllData();
+        });
+    </script>
+
+    <script>
+    /* ============================================================
+       AMBIENT BACKGROUND  —  permanent, layered, low-power.
+       A single fixed canvas painting four layers that always run:
+         1. GRID      — a faint blueprint lattice of dark lines.
+         2. LIGHT     — glowing pulses that travel along the grid
+                        lines (the "light things"), plus soft node
+                        flares where pulses are born.
+         3. DUST      — fine asphalt specks that twinkle and drift up.
+         4. AGGREGATE — larger warm mineral motes, linked by a sparse
+                        survey NETWORK of lines between near neighbours.
+       Tiny particle counts, DPR capped at 1.5, paused on hidden tabs,
+       and rendered as a single static frame under reduced-motion.
+       ============================================================ */
+    (function(){
+        const canvas = document.getElementById('fxCanvas');
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+        // Warm palette sampled from the page (terracotta / gold / sage / ink).
+        const COLORS = ['180,83,42', '230,170,31', '93,125,110', '141,61,28'];
+        const GRID = 66;           // grid cell size in px
+        const GRID_LINE = '20,18,14';   // near-black ink for the lattice
+
+        let W = 0, H = 0, dpr = 1, raf = null, running = false;
+        let dust = [], agg = [], pulses = [];
+        let cols = 0, rows = 0;
+
+        const rand = (a, b) => a + Math.random() * (b - a);
+        const pick = arr => arr[(Math.random() * arr.length) | 0];
+
+        function makeMote(small){
+            return {
+                x: Math.random() * W,
+                y: Math.random() * H,
+                r: small ? rand(0.4, 1.5) : rand(1.2, 3.2),
+                vx: rand(-0.12, 0.12),
+                vy: small ? rand(-0.10, -0.03) : rand(-0.20, -0.05),
+                a: small ? rand(0.10, 0.32) : rand(0.16, 0.42),
+                tw: rand(0, Math.PI * 2),
+                tws: rand(0.006, 0.018),
+                c: pick(COLORS)
+            };
+        }
+
+        // A pulse rides along one grid line (horizontal or vertical).
+        function makePulse(){
+            const horiz = Math.random() < 0.5;
+            const c = Math.random() < 0.7 ? '230,170,31' : '180,83,42'; // gold-biased glow
+            if(horiz){
+                const gy = (1 + ((Math.random() * (rows - 1)) | 0)) * GRID;
+                const dir = Math.random() < 0.5 ? 1 : -1;
+                return { horiz:true, fixed:gy, pos: dir > 0 ? -20 : W + 20, dir, sp: rand(0.6, 1.6), len: rand(34, 90), c, life:0 };
+            } else {
+                const gx = (1 + ((Math.random() * (cols - 1)) | 0)) * GRID;
+                const dir = Math.random() < 0.5 ? 1 : -1;
+                return { horiz:false, fixed:gx, pos: dir > 0 ? -20 : H + 20, dir, sp: rand(0.6, 1.6), len: rand(34, 90), c, life:0 };
+            }
+        }
+
+        function build(){
+            const mp = (W * H) / 1000000;                  // megapixels on screen
+            const nDust = Math.max(14, Math.min(80,  Math.round(mp * 42)));
+            const nAgg  = Math.max(10, Math.min(46,  Math.round(mp * 22)));
+            const nPulse= Math.max(6,  Math.min(20,  Math.round(mp * 9)));
+            dust = []; agg = []; pulses = [];
+            for(let i = 0; i < nDust; i++) dust.push(makeMote(true));
+            for(let i = 0; i < nAgg;  i++) agg.push(makeMote(false));
+            for(let i = 0; i < nPulse;i++){ const p = makePulse(); p.pos = rand(0, p.horiz ? W : H); pulses.push(p); }
+        }
+
+        function resize(){
+            dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+            W = window.innerWidth; H = window.innerHeight;
+            canvas.width = Math.round(W * dpr);
+            canvas.height = Math.round(H * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            cols = Math.ceil(W / GRID); rows = Math.ceil(H / GRID);
+            build();
+        }
+
+        function drawGrid(){
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(' + GRID_LINE + ',0.055)';
+            ctx.beginPath();
+            for(let x = GRID; x < W; x += GRID){ ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, H); }
+            for(let y = GRID; y < H; y += GRID){ ctx.moveTo(0, y + 0.5); ctx.lineTo(W, y + 0.5); }
+            ctx.stroke();
+        }
+
+        function drawPulses(){
+            for(let i = 0; i < pulses.length; i++){
+                const p = pulses[i];
+                const x = p.horiz ? p.pos : p.fixed;
+                const y = p.horiz ? p.fixed : p.pos;
+                const x2 = p.horiz ? p.pos - p.dir * p.len : p.fixed;
+                const y2 = p.horiz ? p.fixed : p.pos - p.dir * p.len;
+                // glowing trail
+                const g = ctx.createLinearGradient(x, y, x2, y2);
+                g.addColorStop(0, 'rgba(' + p.c + ',0.55)');
+                g.addColorStop(1, 'rgba(' + p.c + ',0)');
+                ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x2, y2); ctx.stroke();
+                // bright head with soft halo
+                const halo = ctx.createRadialGradient(x, y, 0, x, y, 7);
+                halo.addColorStop(0, 'rgba(' + p.c + ',0.9)');
+                halo.addColorStop(1, 'rgba(' + p.c + ',0)');
+                ctx.fillStyle = halo;
+                ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = 'rgba(255,250,235,0.95)';
+                ctx.beginPath(); ctx.arc(x, y, 1.4, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+
+        function drawNetwork(){
+            const maxD = 124, maxD2 = maxD * maxD;
+            ctx.lineWidth = 1;
+            for(let i = 0; i < agg.length; i++){
+                const p = agg[i];
+                for(let j = i + 1; j < agg.length; j++){
+                    const q = agg[j];
+                    const dx = p.x - q.x, dy = p.y - q.y, d2 = dx * dx + dy * dy;
+                    if(d2 < maxD2){
+                        const o = (1 - d2 / maxD2) * 0.18;
+                        ctx.strokeStyle = 'rgba(141,61,28,' + o.toFixed(3) + ')';
+                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function drawMotes(list, twinkle){
+            for(let i = 0; i < list.length; i++){
+                const p = list[i];
+                let alpha = p.a;
+                if(twinkle){ p.tw += p.tws; alpha = p.a * (0.5 + 0.5 * Math.sin(p.tw)); }
+                ctx.fillStyle = 'rgba(' + p.c + ',' + alpha.toFixed(3) + ')';
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+
+        function stepMotes(list){
+            for(let i = 0; i < list.length; i++){
+                const p = list[i];
+                p.x += p.vx; p.y += p.vy;
+                if(p.y < -6) p.y = H + 6; else if(p.y > H + 6) p.y = -6;
+                if(p.x < -6) p.x = W + 6; else if(p.x > W + 6) p.x = -6;
+            }
+        }
+
+        function stepPulses(){
+            for(let i = 0; i < pulses.length; i++){
+                const p = pulses[i];
+                p.pos += p.dir * p.sp;
+                const span = p.horiz ? W : H;
+                if(p.dir > 0 ? p.pos > span + 30 : p.pos < -30) pulses[i] = makePulse();
+            }
+        }
+
+        function paint(){
+            ctx.clearRect(0, 0, W, H);
+            drawGrid();
+            drawNetwork();
+            drawPulses();
+            drawMotes(agg, false);
+            drawMotes(dust, true);
+        }
+
+        function frame(){
+            paint();
+            stepMotes(dust); stepMotes(agg); stepPulses();
+            raf = running ? requestAnimationFrame(frame) : null;
+        }
+
+        function start(){
+            if(reduceMotion){ stop(); paint(); return; }   // single static frame
+            if(running) return;
+            running = true; raf = requestAnimationFrame(frame);
+        }
+        function stop(){ running = false; if(raf){ cancelAnimationFrame(raf); raf = null; } }
+
+        let rt = null;
+        window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { resize(); if(reduceMotion) paint(); }, 180); }, { passive:true });
+        document.addEventListener('visibilitychange', () => { if(document.hidden) stop(); else start(); });
+
+        resize();
+        start();
+    })();
+    </script>
+
+</body>
+</html>
