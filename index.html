@@ -169,9 +169,13 @@
 
         /* --- STATS BAND (dark "by the numbers" strip) --- */
         .stats-band{ background:transparent; padding:.5rem 0 3.5rem; }
-        /* contained, reduced-width stats bar (centred panel rather than full-bleed strip) */
-        .stats-band .wrap{ max-width:940px; background:var(--ink); background-image:linear-gradient(180deg,#2b2318,#1b1711); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius-lg); padding:2.1rem 1.6rem; box-shadow:var(--shadow-lg); }
-        .stats-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:1rem; }
+        /* full-bleed dark STRIP: one long horizontal bar spanning the page,
+           stats sitting in a single row divided by thin gold-tinted rules. */
+        .stats-band .wrap{ max-width:none; width:100%; margin:0; padding:1.5rem clamp(1rem,4vw,2.6rem); background:var(--ink); background-image:linear-gradient(180deg,#2b2318,#1b1711); border:none; border-top:1px solid rgba(255,255,255,.07); border-bottom:1px solid rgba(255,255,255,.07); border-radius:0; box-shadow:var(--shadow-md); }
+        .stats-grid{ display:flex; flex-wrap:nowrap; gap:0; max-width:1320px; margin:0 auto; }
+        .stats-band .stat-box{ flex:1 1 0; min-width:0; }
+        /* hairline dividers between cells make it read as one continuous strip */
+        .stats-band .stat-box + .stat-box{ border-left:1px solid rgba(255,255,255,.09); }
         .stats-band .stat-box{ background:transparent; border:none; box-shadow:none; cursor:pointer; text-align:center; padding:1rem .5rem; display:flex; flex-direction:column; align-items:center; gap:.35rem; border-radius:12px; transition:background .25s ease, transform .25s ease; color:#ffffff; }
         .stats-band .stat-box::before{ display:none; }
         .stats-band .stat-box:hover{ background:rgba(255,255,255,.05); transform:translateY(-4px); }
@@ -514,7 +518,10 @@
         @media (max-width:600px){
             .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr; }
             .about-grid{ columns:1; }
-            .stats-grid{ grid-template-columns:repeat(2,1fr); }
+            /* keep the stats as one long strip — swipe horizontally on phones */
+            .stats-grid{ overflow-x:auto; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+            .stats-grid::-webkit-scrollbar{ display:none; }
+            .stats-band .stat-box{ flex:0 0 40%; scroll-snap-align:center; }
             .section{ padding:3.6rem 0; }
             .wrap{ padding:0 1.3rem; }
             .header-inner{ padding:.75rem 1.3rem; }
@@ -534,6 +541,68 @@
         .btn-outline{ background:transparent; color:#2563eb; border-color:#2563eb; }
         .btn-outline:hover{ background:#2563eb; color:#fff; }
         .card::before{ background:linear-gradient(90deg,#2563eb,#5b8def); }
+
+        /* =====================================================================
+           CROSS-BROWSER + MOBILE HARDENING
+           Targeted fixes layered on top of the existing responsive rules so the
+           page holds together on real phones (iOS Safari, Android Chrome,
+           Samsung Internet) and older desktop browsers — without restyling.
+           ===================================================================== */
+
+        /* Stop long unbreakable strings (DOIs, emails, URLs, journal names)
+           from forcing horizontal scroll on narrow screens. */
+        body{ overflow-wrap:break-word; word-wrap:break-word; }
+        .pub-meta,.pub-journal,.contact-info p,.resource-body p,.card p,
+        .announcement-list li,.person-topic,.lede,.footer-plate p{
+            overflow-wrap:break-word; word-break:break-word; hyphens:auto; -webkit-hyphens:auto;
+        }
+        a{ overflow-wrap:break-word; }
+
+        /* iOS/Android dynamic viewport: 100vh is wrong when the browser chrome
+           shows/hides. dvh keeps the slide-in menu the true visible height. */
+        @supports (height:100dvh){
+            @media (max-width:920px){ .main-nav{ height:100dvh; } }
+        }
+
+        /* The hero name stays on ONE line on anything tablet-width or wider;
+           on small phones it wraps to two lines instead of overflowing. */
+        .hero-name{ overflow-wrap:normal; }
+        @media (min-width:560px){ .hero-name{ white-space:nowrap; } }
+
+        /* Long section sub-headings shouldn't be clipped on phones. */
+        @media (max-width:600px){
+            .sub-head{ flex-wrap:wrap; gap:.7rem; }
+            .sub-head h3{ white-space:normal; }
+        }
+
+        /* Old Safari (<14.1) ignores flex/grid `gap`; keep buttons & nav from
+           colliding there via a margin fallback that modern browsers override. */
+        @supports not (gap:1rem){
+            .hero-actions > *{ margin:.5rem .5rem 0 0; }
+            .main-nav{ }
+        }
+
+        /* Extra-small phones (≤380px): trim padding/type so nothing spills. */
+        @media (max-width:380px){
+            .wrap{ padding:0 1rem; }
+            .header-inner{ padding:.7rem 1rem; }
+            .hero-text h1{ font-size:clamp(2.1rem,9vw,2.9rem); }
+            .stat-number{ font-size:2rem; }
+            .btn{ padding:.72rem 1.1rem; font-size:.82rem; }
+            .lab-card{ width:84vw; }
+        }
+
+        /* Tap targets: make icon/nav buttons comfortably thumb-sized on touch. */
+        @media (hover:none){
+            .main-nav a{ padding:.95rem 1rem; }
+            .btn{ min-height:44px; }
+        }
+
+        /* Smooth momentum scrolling for the publications scroll pane on iOS. */
+        .auto-scroll-container{ -webkit-overflow-scrolling:touch; }
+
+        /* Guard against any stray child forcing the page wider than the screen. */
+        html,body{ max-width:100%; }
     </style>
 </head>
 <body style="background: radial-gradient(1100px 650px at 18% -5%, rgba(255,252,244,.85), rgba(255,252,244,0) 60%), linear-gradient(165deg, #efe4cd 0%, #e7d7b6 55%, #ddc9a4 100%); background-attachment: fixed;">
@@ -599,7 +668,7 @@
             <div class="wrap hero-grid">
                 <div class="hero-text">
                     <span class="eyebrow">Assistant Professor · Civil &amp; Infrastructure Engineering</span>
-                    <h1 class="display" style="white-space:nowrap;">Dr. Aniket V. Kataware</h1>
+                    <h1 class="display hero-name">Dr. Aniket V. Kataware</h1>
                     <p class="lede" id="heroLede">Department of Civil and Infrastructure Engineering, Indian Institute of Technology Dharwad — researching asphalt materials, binder rheology, and sustainable, resilient pavements.</p>
                     <div class="hero-actions">
                         <a href="https://scholar.google.com/citations?user=GXYFqtMAAAAJ&hl=en" target="_blank" class="btn"><i class="fa-brands fa-google"></i> Google Scholar</a>
