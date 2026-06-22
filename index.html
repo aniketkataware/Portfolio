@@ -18,38 +18,46 @@
            ===================================================================== */
         :root{
             /* Warm paper + ink + terracotta/gold/sage palette */
-            --paper:#f4ede1;
-            --band:#ece2d2;
+            --paper:#f6f5f2;
+            --band:#ebeae6;
             --ink:#262019;
 
-            --bg-body:#e7dcc8;          /* image/placeholder backdrops (warm neutral) */
-            --bg-card:#fffdf8;
+            --bg-body:#e8e7e3;          /* image/placeholder backdrops (neutral grey) */
+            --bg-card:#ffffff;
             --text-main:#3a342c;
             --text-muted:#857a69;
             --heading-color:#262019;
 
-            --primary:#b4532a;          /* terracotta — main accent */
-            --primary-dark:#8d3d1c;
-            --primary-light:#f1ddcd;
+            --primary:#2563eb;          /* blue — main accent */
+            --primary-dark:#1d4fb0;
+            --primary-light:#ededea;
             --accent:#e6aa1f;           /* gold — matches the nav road-marking yellow (#f4c20d) */
             --accent-dark:#8a661f;
             --secondary:#5d7d6e;        /* sage / olive */
             --danger:#b3361f;
 
-            --border-color:#e2d6c2;
+            --border-color:#e4e2dd;
             --shadow-sm:0 1px 2px rgba(60,45,30,.06);
             --shadow-md:0 8px 22px rgba(60,45,30,.09);
             --shadow-lg:0 16px 34px rgba(60,45,30,.12);
             --shadow-hover:0 22px 44px rgba(60,45,30,.18);
             --radius-md:10px;
             --radius-lg:16px;
+
+            /* Motion system — one easing language shared across the whole page */
+            --ease-out:cubic-bezier(.22,.61,.36,1);   /* decisive editorial settle */
+            --ease-soft:cubic-bezier(.45,0,.2,1);     /* gentle UI state changes */
+            --dur-1:.28s;   /* micro-interactions (hover) */
+            --dur-2:.45s;   /* element transitions */
+            --dur-3:.72s;   /* entrances / reveals */
         }
 
         *{ margin:0; padding:0; box-sizing:border-box; }
         html{ scroll-behavior:smooth; }
         body{
             font-family:'Inter',sans-serif; background:var(--paper); color:var(--text-main);
-            line-height:1.75; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+            line-height:1.75; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+            text-rendering:optimizeLegibility; overflow-x:hidden;
         }
         h1,h2,h3,h4{ font-family:'Fraunces','Georgia',serif; color:var(--heading-color); line-height:1.14; font-weight:600; text-wrap:balance; }
         img{ max-width:100%; display:block; }
@@ -76,7 +84,7 @@
            Black asphalt bar; an inline SVG paints the road markings: a solid
            yellow edge line at both ends and a dashed centre lane (long gaps). */
         .site-header{
-            position:sticky; top:0; z-index:1000; overflow:hidden;
+            position:sticky; top:0; z-index:1200; overflow:hidden;
             background:#14110d;
             background-image:linear-gradient(180deg,#1e1a13,#14110d 55%,#100d08);
             transition:box-shadow .3s ease;
@@ -89,17 +97,22 @@
         .wordmark{ font-family:'Fraunces',serif; font-weight:600; font-size:1.28rem; color:#ffffff; cursor:pointer; line-height:1.1; text-decoration:none; display:flex; flex-direction:column; text-shadow:0 1px 8px rgba(0,0,0,.6); background:rgba(16,13,9,.82); padding:.32rem .7rem; border-radius:8px; }
         .wordmark span{ font-family:'Inter',sans-serif; font-size:.6rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#f4c20d; margin-top:.3rem; text-shadow:none; }
         .main-nav{ display:flex; gap:.15rem; align-items:center; }
-        .main-nav a{ font-size:.83rem; font-weight:500; color:#ece3d2; text-decoration:none; padding:.5rem .78rem; border-radius:7px; cursor:pointer; transition:all .2s ease; position:relative; white-space:nowrap; background:rgba(16,13,9,.85); }
-        .main-nav a:hover{ color:#14110d; background:#f4c20d; }
+        .main-nav a{ font-size:.83rem; font-weight:500; color:#ece3d2; text-decoration:none; padding:.5rem .78rem; border-radius:7px; cursor:pointer; transition:color var(--dur-1) var(--ease-soft), background var(--dur-1) var(--ease-soft); position:relative; white-space:nowrap; background:rgba(16,13,9,.85); }
+        .main-nav a:hover{ color:#f4c20d; background:rgba(16,13,9,.85); }
         .main-nav a.active{ color:#f4c20d; }
         .main-nav a.active::after{ content:''; position:absolute; left:.78rem; right:.78rem; bottom:.22rem; height:2px; background:#f4c20d; border-radius:2px; }
+        /* hover underline reveal (grows from the left) on non-active links */
+        .main-nav a:not(.active)::after{ content:''; position:absolute; left:.78rem; right:.78rem; bottom:.22rem; height:2px; background:#f4c20d; border-radius:2px; transform:scaleX(0); transform-origin:left; opacity:.85; transition:transform var(--dur-1) var(--ease-out); }
+        .main-nav a:not(.active):hover::after{ transform:scaleX(1); }
+        @media (prefers-reduced-motion:reduce){ .main-nav a:not(.active)::after{ transition:none; } }
         .menu-toggle{ display:none; background:none; border:none; font-size:1.35rem; color:#f4c20d; cursor:pointer; padding:.2rem .4rem; }
         .nav-backdrop{ position:fixed; inset:0; background:rgba(38,32,25,.42); opacity:0; visibility:hidden; transition:.3s ease; z-index:1050; }
         .nav-backdrop.show{ opacity:1; visibility:visible; }
 
         /* --- HERO --- */
-        .hero{ position:relative; padding:5rem 0 5.5rem; overflow:hidden; }
-        .hero::before{ content:''; position:absolute; top:-25%; right:-12%; width:540px; height:540px; background:radial-gradient(circle, rgba(180,83,42,.11), transparent 68%); pointer-events:none; }
+        .hero{ position:relative; padding:5rem 0 5.5rem; overflow:hidden;
+            background:transparent; }
+        .hero::before{ content:''; position:absolute; top:-25%; right:-12%; width:540px; height:540px; background:radial-gradient(circle, rgba(37,99,235,.12), transparent 68%); pointer-events:none; }
         .hero::after{ content:''; position:absolute; bottom:-20%; left:-10%; width:420px; height:420px; background:radial-gradient(circle, rgba(194,147,58,.10), transparent 70%); pointer-events:none; }
         .hero-grid{ display:grid; grid-template-columns:1.25fr .85fr; gap:3.5rem; align-items:center; position:relative; z-index:1; }
         .eyebrow{ display:inline-block; font-size:.72rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:var(--primary); margin-bottom:1.1rem; }
@@ -109,12 +122,22 @@
         .lede{ font-size:1.12rem; color:var(--text-main); max-width:38rem; margin-bottom:2rem; }
         .hero-actions{ display:flex; gap:1rem; flex-wrap:wrap; }
         .hero-photo{ position:relative; justify-self:center; }
-        .hero-photo img{ width:min(340px,82vw); aspect-ratio:1/1; object-fit:cover; border-radius:14px; border:1px solid var(--border-color); box-shadow:var(--shadow-lg); position:relative; z-index:1; display:block; }
-        /* clean offset accent frame — same size & corner radius as the photo, nudged down-right */
-        .hero-photo::after{ content:''; position:absolute; inset:0; z-index:0; transform:translate(16px,16px); border:2px solid var(--accent); border-radius:14px; }
+        .hero-photo img{ width:min(380px,84vw); aspect-ratio:1/1; object-fit:cover; border-radius:14px; border:1px solid var(--border-color); box-shadow:var(--shadow-lg); position:relative; z-index:1; display:block; }
+        /* Choreographed hero entrance — content rises in sequence (eyebrow → headline → lede → actions → logos).
+           Suppress the section-level viewIn here so the per-child choreography is the hero's sole entrance. */
+        .hero.view-active{ animation:none; }
+        @keyframes heroRise{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
+        .hero.view-active .hero-text > *{ animation:heroRise var(--dur-3) var(--ease-out) both; }
+        .hero.view-active .hero-text > *:nth-child(1){ animation-delay:.06s; }
+        .hero.view-active .hero-text > *:nth-child(2){ animation-delay:.14s; }
+        .hero.view-active .hero-text > *:nth-child(3){ animation-delay:.22s; }
+        .hero.view-active .hero-text > *:nth-child(4){ animation-delay:.30s; }
+        .hero.view-active .hero-text > *:nth-child(5){ animation-delay:.38s; }
+        .hero.view-active .hero-photo{ animation:heroRise .8s var(--ease-out) both; animation-delay:.18s; }
+        @media (prefers-reduced-motion:reduce){ .hero.view-active .hero-text > *, .hero.view-active .hero-photo{ animation:none; } }
 
         /* --- BUTTONS --- */
-        .btn{ display:inline-flex; align-items:center; gap:.55rem; padding:.8rem 1.45rem; background:var(--primary); color:#fff; border:1px solid var(--primary); border-radius:7px; font-size:.86rem; font-weight:600; text-decoration:none; cursor:pointer; transition:all .25s ease; }
+        .btn{ display:inline-flex; align-items:center; gap:.55rem; padding:.8rem 1.45rem; background:var(--primary); color:#fff; border:1px solid var(--primary); border-radius:7px; font-size:.86rem; font-weight:600; text-decoration:none; cursor:pointer; transition:background var(--dur-1) var(--ease-soft), border-color var(--dur-1) var(--ease-soft), color var(--dur-1) var(--ease-soft), transform var(--dur-1) var(--ease-out), box-shadow var(--dur-1) var(--ease-out); }
         .btn:hover{ background:var(--primary-dark); border-color:var(--primary-dark); transform:translateY(-2px); box-shadow:var(--shadow-md); }
         .btn-outline{ background:transparent; color:var(--primary); border-color:var(--primary); }
         .btn-outline:hover{ background:var(--primary); color:#fff; }
@@ -123,7 +146,8 @@
 
         /* --- SECTIONS / BANDS --- */
         .section{ padding:5rem 0; }
-        .band{ background:var(--band); }
+        /* transparent so the shared ambient (home) background shows on every tab */
+        .band{ background:transparent; }
 
         /* SPA views: only the active section-group is shown; it animates in on nav click */
         main > section{ display:none; }
@@ -144,25 +168,32 @@
         .mt-2{ margin-top:2rem; } .mb-3{ margin-bottom:3rem; }
 
         /* --- STATS BAND (dark "by the numbers" strip) --- */
-        .stats-band{ background:var(--ink); padding:3.2rem 0; }
+        .stats-band{ background:transparent; padding:.5rem 0 3.5rem; }
+        /* contained, reduced-width stats bar (centred panel rather than full-bleed strip) */
+        .stats-band .wrap{ max-width:940px; background:var(--ink); background-image:linear-gradient(180deg,#2b2318,#1b1711); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius-lg); padding:2.1rem 1.6rem; box-shadow:var(--shadow-lg); }
         .stats-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:1rem; }
-        .stats-band .stat-box{ background:transparent; border:none; box-shadow:none; cursor:pointer; text-align:center; padding:1rem .5rem; display:flex; flex-direction:column; align-items:center; gap:.35rem; border-radius:12px; transition:background .25s ease, transform .25s ease; color:var(--paper); }
+        .stats-band .stat-box{ background:transparent; border:none; box-shadow:none; cursor:pointer; text-align:center; padding:1rem .5rem; display:flex; flex-direction:column; align-items:center; gap:.35rem; border-radius:12px; transition:background .25s ease, transform .25s ease; color:#ffffff; }
         .stats-band .stat-box::before{ display:none; }
         .stats-band .stat-box:hover{ background:rgba(255,255,255,.05); transform:translateY(-4px); }
         .stat-icon-wrapper{ width:46px; height:46px; border-radius:12px; background:var(--primary-light); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:1.15rem; margin-bottom:.35rem; transition:all .25s ease; }
         .stats-band .stat-icon-wrapper{ border-radius:50%; background:rgba(244,237,225,.10); color:var(--accent); }
         .stats-band .stat-box:hover .stat-icon-wrapper{ background:var(--accent); color:var(--ink); transform:scale(1.06); }
         .stat-number{ font-family:'Fraunces',serif; font-size:2.5rem; font-weight:600; line-height:1; color:#fff; }
-        .stat-label{ font-size:.66rem; letter-spacing:.13em; text-transform:uppercase; font-weight:600; color:#cabfac; margin:0; }
+        .stat-label{ font-size:.66rem; letter-spacing:.13em; text-transform:uppercase; font-weight:600; color:#ffffff; margin:0; }
+        /* `.card p` (light theme) outranks `.stat-label` and was painting the labels dark on the dark band — force white */
+        .stats-band .stat-box .stat-label{ color:#ffffff; }
 
         /* --- CARDS / GRIDS --- */
         .grid-2{ display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:1.6rem; }
         .grid-3{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.6rem; }
         .grid-4{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.4rem; }
+        /* 2-up masonry: cards pack by height so a short card lets the next move up (no row-gap holes) */
+        .about-grid{ columns:2; column-gap:1.6rem; }
+        .about-grid .card{ break-inside:avoid; -webkit-column-break-inside:avoid; margin:0 0 1.6rem; }
         .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; align-items:start; }
 
-        .card{ background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:1.9rem; box-shadow:var(--shadow-sm); position:relative; overflow:hidden; transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease; }
-        .card::before{ content:''; position:absolute; top:0; left:0; width:100%; height:3px; background:linear-gradient(90deg,var(--primary),var(--accent)); transform:scaleX(0); transform-origin:left; transition:transform .35s ease; }
+        .card{ background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:1.9rem; box-shadow:var(--shadow-sm); position:relative; overflow:hidden; transition:transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out); }
+        .card::before{ content:''; position:absolute; top:0; left:0; width:100%; height:3px; background:linear-gradient(90deg,var(--primary),var(--accent)); transform:scaleX(0); transform-origin:left; transition:transform var(--dur-2) var(--ease-out); }
         .card:hover{ transform:translateY(-4px); box-shadow:var(--shadow-md); border-color:#d8c6ad; }
         .card:hover::before{ transform:scaleX(1); }
         .card h3{ font-family:'Fraunces',serif; font-size:1.2rem; margin-bottom:.45rem; color:var(--heading-color); }
@@ -231,7 +262,7 @@
             border-radius:var(--radius-md);
             padding:1.2rem 1.6rem;
             box-shadow:var(--shadow-sm);
-            transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+            transition:transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
         }
         .person-row:hover{ transform:translateX(5px); box-shadow:var(--shadow-md); border-left-color:#f4c20d; }
         .person-photo{
@@ -293,14 +324,69 @@
         .gallery-tags{ margin-top:.7rem; display:flex; flex-wrap:wrap; gap:.4rem; }
         .gallery-tag{ font-size:.64rem; font-weight:600; letter-spacing:.05em; background:var(--primary-light); color:var(--primary-dark); padding:.2rem .5rem; border-radius:3px; text-transform:uppercase; }
 
+        /* --- RESOURCES (link cards grouped by category) --- */
+        /* centred tracks so a handful of cards stay balanced instead of leaving a lopsided gap */
+        .resource-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(282px,318px)); justify-content:center; gap:1.8rem; }
+        .sub-count{ font-family:'Inter',sans-serif; font-size:.74rem; font-weight:700; color:var(--primary); background:var(--primary-light); padding:.18rem .62rem; border-radius:20px; line-height:1; }
+        .resource-card{ position:relative; display:flex; flex-direction:column; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-sm); text-decoration:none; color:inherit; transition:transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out); }
+        .resource-card::before{ content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--primary),var(--accent)); transform:scaleX(0); transform-origin:left; transition:transform var(--dur-2) var(--ease-out); z-index:3; }
+        .resource-card:hover{ transform:translateY(-7px); box-shadow:var(--shadow-hover); border-color:transparent; }
+        .resource-card:hover::before{ transform:scaleX(1); }
+        .resource-media{ position:relative; overflow:hidden; background:var(--bg-body); }
+        .resource-img{ width:100%; height:182px; object-fit:cover; display:block; transition:transform .6s var(--ease-out); }
+        .resource-card:hover .resource-img{ transform:scale(1.06); }
+        .resource-media::after{ content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(38,32,25,0) 55%,rgba(38,32,25,.42)); opacity:0; transition:opacity var(--dur-2) ease; }
+        .resource-card:hover .resource-media::after{ opacity:1; }
+        .resource-ext{ position:absolute; top:.7rem; right:.7rem; width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,.94); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:.78rem; box-shadow:var(--shadow-sm); opacity:0; transform:translateY(-6px); transition:opacity var(--dur-2) ease, transform var(--dur-2) var(--ease-out); z-index:2; }
+        .resource-card:hover .resource-ext{ opacity:1; transform:none; }
+        .resource-body{ padding:1.25rem 1.35rem 1.45rem; display:flex; flex-direction:column; gap:.55rem; flex:1; }
+        .resource-body h4{ font-family:'Fraunces',serif; font-weight:600; font-size:1.14rem; color:var(--heading-color); line-height:1.3; }
+        .resource-body p{ font-size:.92rem; color:var(--text-muted); line-height:1.55; flex:1; }
+        .resource-link{ display:inline-flex; align-items:center; gap:.45rem; font-size:.82rem; font-weight:600; color:var(--primary); margin-top:.35rem; transition:gap var(--dur-1) var(--ease-out); }
+        .resource-card:hover .resource-link{ gap:.78rem; }
+
         /* --- INFO CARDS (honors / activities) --- */
         .info-card{ padding:0; overflow:hidden; display:flex; flex-direction:column; }
         .info-card::before{ display:none; }
-        .info-card-img{ width:100%; height:185px; object-fit:cover; background:var(--bg-body); border-bottom:3px solid var(--accent); }
-        .info-card-icon{ width:100%; height:120px; display:flex; align-items:center; justify-content:center; background:var(--primary-light); color:var(--primary); font-size:2.2rem; border-bottom:3px solid var(--accent); }
+        /* Responsive image box: a fixed frame so every card matches, with the
+           WHOLE photo fitted inside (contain) — nothing cropped, centred, with
+           a little padding so it never touches the edges. */
+        .info-card-img{ width:100%; aspect-ratio:3/2; height:auto; object-fit:contain; object-position:center; display:block; padding:.5rem; background:var(--bg-body); border-bottom:3px solid var(--accent); }
+        .info-card-icon{ width:100%; aspect-ratio:3/2; height:auto; display:flex; align-items:center; justify-content:center; background:var(--primary-light); color:var(--primary); font-size:2.2rem; border-bottom:3px solid var(--accent); }
         .info-card-body{ padding:1.5rem; flex:1; }
         .info-card-body h3{ font-size:1.15rem; margin-bottom:.5rem; }
         .info-card-body p{ font-size:.95rem; color:var(--text-main); margin:0; line-height:1.6; }
+
+        /* --- IN-CARD IMAGE CAROUSEL (multiple pictures per honor/activity) ---
+           A 4:3 frame holding stacked images that cross-fade; prev/next buttons
+           and dots are overlaid INSIDE the picture and matched to the palette. */
+        .info-card-media{ position:relative; width:100%; aspect-ratio:3/2; overflow:hidden; background:var(--bg-body); border-bottom:3px solid var(--accent); }
+        .info-card-media .info-card-img{ position:absolute; inset:0; width:100%; height:100%; aspect-ratio:auto; padding:.5rem; border-bottom:none; opacity:0; transition:opacity .45s ease; }
+        .info-card-media .info-card-img.active{ opacity:1; }
+        .ic-nav{
+            position:absolute; top:50%; transform:translateY(-50%); z-index:3;
+            width:34px; height:34px; border-radius:50%;
+            background:rgba(255,253,248,.85); color:var(--primary);
+            border:1px solid var(--border-color); box-shadow:var(--shadow-sm);
+            font-size:.82rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+            opacity:.88; -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+            transition:background .25s ease, color .25s ease, transform .25s ease, opacity .25s ease;
+        }
+        .info-card-media:hover .ic-nav{ opacity:1; }
+        .ic-nav:hover{ background:var(--primary); color:#fff; border-color:var(--primary); transform:translateY(-50%) scale(1.1); }
+        .ic-prev{ left:.55rem; } .ic-next{ right:.55rem; }
+        .ic-dots{ position:absolute; left:0; right:0; bottom:.6rem; z-index:3; display:flex; gap:.4rem; justify-content:center; }
+        .ic-dot{ width:8px; height:8px; padding:0; border-radius:50%; cursor:pointer; border:1px solid rgba(255,253,248,.9); background:rgba(255,253,248,.45); box-shadow:0 1px 2px rgba(38,32,25,.4); transition:background .25s ease, transform .25s ease; }
+        .ic-dot.active{ background:var(--accent); border-color:var(--accent); transform:scale(1.15); }
+        @media (max-width:600px){ .ic-nav{ width:30px; height:30px; } }
+        /* generic multi-image carousel (gallery / resources / any image card) */
+        .img-carousel{ position:relative; width:100%; overflow:hidden; background:var(--bg-body); }
+        .img-carousel .ic-slide{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; border:0; opacity:0; transition:opacity .5s ease; }
+        .img-carousel .ic-slide.active{ opacity:1; }
+        .img-carousel .ic-nav{ opacity:0; }
+        .img-carousel:hover .ic-nav{ opacity:1; }
+        .gallery-card .img-carousel{ height:190px; border-bottom:3px solid var(--accent); }
+        .resource-media .img-carousel{ height:182px; }
 
         /* --- RESEARCH GROUP CARDS --- */
         .prg-title{ font-family:'Fraunces',serif; display:flex; align-items:center; gap:.6rem; font-size:1.2rem; color:var(--heading-color); padding-bottom:.9rem; margin-bottom:1rem; border-bottom:2px solid var(--border-color); }
@@ -326,10 +412,27 @@
 
         .sheet-status{ font-size:.9rem; }
 
-        /* --- FOOTER --- */
-        footer{ background:var(--ink); color:#b6a892; text-align:center; padding:3rem 2rem; border-top:4px solid var(--accent); }
-        footer strong{ color:#fff; font-family:'Fraunces',serif; font-weight:600; }
-        footer .foot-sub{ font-size:.9rem; margin-top:.4rem; }
+        /* --- FOOTER: railway track (rails + sleepers) behind a centred content plate ---
+           An inline SVG paints two gold rails over wood-tan sleepers; the bordered plate
+           sits over the centre so the track runs out from behind it on both sides. */
+        .site-footer{ position:relative; display:flex; align-items:center; justify-content:center; min-height:80px; padding:.35rem 1.5rem; background:rgba(20,17,12,.5); border-top:4px solid var(--accent); overflow:hidden; }
+        .track-art{ position:absolute; inset:0; width:100%; height:100%; z-index:0; }
+        .footer-plate{ position:relative; z-index:2; width:min(520px,92%); margin:0 auto; text-align:center; background:rgba(28,24,18,.34); -webkit-backdrop-filter:blur(12px) saturate(130%); backdrop-filter:blur(12px) saturate(130%); color:#efe7d8; border:1px solid rgba(255,255,255,.18); border-radius:16px; padding:1.1rem 1.7rem; box-shadow:0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.16); line-height:1.5; }
+        .footer-plate p{ margin:0; }
+        .footer-plate .foot-tag{ display:inline-block; font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:700; margin-bottom:.35rem; }
+        .footer-plate strong{ color:#fff; font-family:'Fraunces',serif; font-weight:600; }
+        .footer-plate .foot-sub{ font-size:.9rem; color:rgba(239,231,216,.72); margin-top:.4rem; }
+        /* email click confirmation toast */
+        .copy-toast{ position:fixed; left:50%; bottom:26px; transform:translate(-50%,16px); background:#1c1813; color:#fff; font-family:'Inter',sans-serif; font-size:.85rem; font-weight:500; padding:.7rem 1.1rem; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,.4); z-index:4000; opacity:0; pointer-events:none; transition:opacity .3s ease, transform .3s var(--ease-out); }
+        .copy-toast.show{ opacity:1; transform:translate(-50%,0); }
+        @media (max-width:640px){ .site-footer{ min-height:0; padding:2rem 1rem; } }
+        .hero-affiliations{ display:flex; flex-direction:column; gap:.75rem; margin-top:2.2rem; }
+        .affil-label{ font-size:.66rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--text-muted); }
+        .affil-logos{ display:flex; gap:.8rem; flex-wrap:wrap; }
+        .affil-item{ display:flex; align-items:center; gap:.65rem; background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; padding:.5rem .9rem .5rem .55rem; box-shadow:var(--shadow-sm); transition:transform var(--dur-1) var(--ease-out), box-shadow var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out); }
+        .affil-item:hover{ transform:translateY(-3px); box-shadow:var(--shadow-md); border-color:var(--primary); }
+        .affil-item img{ height:58px; width:58px; object-fit:contain; background:#fff; border-radius:10px; padding:4px; flex:none; }
+        .affil-name{ font-family:'Inter',sans-serif; font-size:.78rem; font-weight:600; color:var(--heading-color); line-height:1.22; max-width:170px; }
 
         /* --- AMBIENT PARTICLE FIELD ---
            A single fixed canvas painted behind all content. It sits above the
@@ -341,9 +444,53 @@
         footer{ position:relative; z-index:1; }
 
         /* --- SCROLL REVEAL --- */
-        .reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+        /* on-scroll "assemble": off-centre blocks fly in from their side, centred
+           blocks grow in. Fast + capped stagger. data-dir is assigned in JS by the
+           element's position. */
+        .reveal{ opacity:0; transform:translateY(20px); transition:opacity .5s var(--ease-out), transform .5s var(--ease-out); transition-delay:var(--rd,0s); will-change:opacity,transform; }
+        .reveal[data-dir="left"]{ transform:translateX(-130px); }
+        .reveal[data-dir="right"]{ transform:translateX(130px); }
+        .reveal[data-dir="center"]{ transform:scale(.6); }
         .reveal.in{ opacity:1; transform:none; }
-        @media (prefers-reduced-motion:reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
+        /* grids whose children assemble in individually (container itself stays put) */
+        .assemble{ opacity:1 !important; transform:none !important; }
+        .assemble > *{ opacity:0; transform:translateY(16px); transition:opacity .5s var(--ease-out), transform .5s var(--ease-out); transition-delay:var(--rd,0s); will-change:opacity,transform; }
+        .assemble > *[data-dir="left"]{ transform:translateX(-130px); }
+        .assemble > *[data-dir="right"]{ transform:translateX(130px); }
+        .assemble > *[data-dir="center"]{ transform:scale(.6); }
+        .assemble > *.in{ opacity:1; transform:none; }
+        @media (prefers-reduced-motion:reduce){
+            .reveal, .reveal[data-dir], .assemble > *, .assemble > *[data-dir]{ opacity:1; transform:none; transition:none; }
+        }
+
+        /* INTRO START — first-load cinematic intro overlay.
+           Revert: delete this CSS block + the #introOverlay markup/script right after <body>. */
+        #introOverlay{ position:fixed; inset:0; z-index:3000; display:flex; flex-direction:column;
+            align-items:center; justify-content:center; gap:1.15rem; padding:2rem; text-align:center;
+            background:#14110d; background-image:linear-gradient(180deg,#1e1a13,#14110d 55%,#100d08);
+            opacity:1; transition:opacity .9s var(--ease-soft), visibility .9s var(--ease-soft); }
+        #introOverlay .intro-eyebrow{ font-family:'Inter',sans-serif; font-size:.72rem; font-weight:600;
+            letter-spacing:.4em; text-transform:uppercase; color:#f4c20d; opacity:0; transform:translateY(8px);
+            animation:introUp .9s var(--ease-out) .25s forwards; }
+        #introOverlay .intro-name{ font-family:'Fraunces',serif; font-weight:600; color:#fff;
+            font-size:clamp(2rem,6vw,3.6rem); line-height:1.12; letter-spacing:.04em; opacity:0;
+            transform:translateY(16px); animation:introUp 1s var(--ease-out) .5s forwards; }
+        #introOverlay .intro-line{ width:0; height:2px; background:#f4c20d; border-radius:2px;
+            box-shadow:0 0 14px rgba(244,194,13,.6); animation:introLine 1.1s var(--ease-out) .95s forwards; }
+        #introOverlay .intro-sub{ font-family:'Inter',sans-serif; font-size:.78rem; letter-spacing:.22em;
+            text-transform:uppercase; color:#ece3d2; opacity:0; animation:introUp .9s var(--ease-out) 1.2s forwards; }
+        @keyframes introUp{ to{ opacity:1; transform:none; } }
+        @keyframes introLine{ from{ width:0; } to{ width:min(300px,62vw); } }
+        body.intro-hide #introOverlay{ opacity:0; visibility:hidden; pointer-events:none; }
+        /* hold the hero's choreographed entrance behind the curtain until it lifts */
+        body.intro-playing .hero.view-active .hero-text > *,
+        body.intro-playing .hero.view-active .hero-photo{ animation-play-state:paused; }
+        @media (prefers-reduced-motion:reduce){
+            #introOverlay{ transition:none; }
+            #introOverlay *{ animation:none !important; opacity:1 !important; transform:none !important; }
+            #introOverlay .intro-line{ width:min(300px,62vw); }
+        }
+        /* INTRO END */
 
         /* --- RESPONSIVE --- */
         @media (max-width:920px){
@@ -359,11 +506,14 @@
             .hero-photo{ order:-1; }
             .hero-text .eyebrow{ margin-left:auto; margin-right:auto; }
             .hero-actions{ justify-content:center; }
+            .hero-affiliations{ align-items:center; }
+            .hero-affiliations .affil-logos{ justify-content:center; }
             .lede{ margin-left:auto; margin-right:auto; }
             .two-col{ grid-template-columns:1fr; }
         }
         @media (max-width:600px){
             .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr; }
+            .about-grid{ columns:1; }
             .stats-grid{ grid-template-columns:repeat(2,1fr); }
             .section{ padding:3.6rem 0; }
             .wrap{ padding:0 1.3rem; }
@@ -373,10 +523,47 @@
             .person-row{ flex-direction:column; text-align:center; gap:1rem; padding:1.4rem 1.2rem; }
             .person-info{ text-align:center; }
             .person-badges{ justify-content:center; }
+            /* full-width honor/activity cards: shorter frame so they aren't too tall */
+            .info-card-img,.info-card-icon{ aspect-ratio:16/9; }
+            .info-card-body{ padding:1.2rem; }
         }
+
+        /* ===== Blue buttons + blue card hover top-border ===== */
+        .btn{ background:#2563eb; border-color:#2563eb; color:#fff; }
+        .btn:hover{ background:#1d4fd0; border-color:#1d4fd0; color:#fff; }
+        .btn-outline{ background:transparent; color:#2563eb; border-color:#2563eb; }
+        .btn-outline:hover{ background:#2563eb; color:#fff; }
+        .card::before{ background:linear-gradient(90deg,#2563eb,#5b8def); }
     </style>
 </head>
-<body style="background-color: rgb(217, 200, 170)">
+<body style="background: radial-gradient(1100px 650px at 18% -5%, rgba(255,252,244,.85), rgba(255,252,244,0) 60%), linear-gradient(165deg, #efe4cd 0%, #e7d7b6 55%, #ddc9a4 100%); background-attachment: fixed;">
+
+    <!-- INTRO START — first-load cinematic intro. Revert: delete this whole block + the INTRO CSS block in <style>. -->
+    <noscript><style>#introOverlay{display:none!important;}</style></noscript>
+    <div id="introOverlay" aria-hidden="true">
+        <span class="intro-eyebrow">Pavement Engineering · IIT Dharwad</span>
+        <h2 class="intro-name">Dr. Aniket V. Kataware</h2>
+        <span class="intro-line"></span>
+        <span class="intro-sub">Materials · Rheology · Resilient Pavements</span>
+    </div>
+    <script>
+        (function(){
+            var b = document.body; if(!b) return;
+            if(window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches){ b.classList.add('intro-hide'); return; }
+            b.classList.add('intro-playing');               // hold the hero entrance behind the curtain
+            var lifted = false;
+            function lift(){
+                if(lifted) return; lifted = true;
+                setTimeout(function(){
+                    b.classList.add('intro-hide');          // fade the curtain out
+                    setTimeout(function(){ b.classList.remove('intro-playing'); }, 250); // release hero as it lifts
+                }, 900);                                    // hold a beat after everything has loaded
+            }
+            window.addEventListener('load', lift);
+            setTimeout(lift, 4000);                          // safety: never trap the user behind the curtain
+        })();
+    </script>
+    <!-- INTRO END -->
 
     <canvas id="fxCanvas" aria-hidden="true"></canvas>
 
@@ -398,6 +585,7 @@
                 <a data-target="students" onclick="navTo('students')">Students</a>
                 <a data-target="recognition" onclick="navTo('recognition')">Recognition</a>
                 <a data-target="gallery" onclick="navTo('gallery')">Gallery</a>
+                <a data-target="resources" onclick="navTo('resources')">Resources</a>
                 <a data-target="contact" onclick="navTo('contact')">Contact</a>
             </nav>
         </div>
@@ -411,11 +599,24 @@
             <div class="wrap hero-grid">
                 <div class="hero-text">
                     <span class="eyebrow">Assistant Professor · Civil &amp; Infrastructure Engineering</span>
-                    <h1 class="display">Dr. Aniket<br>V. Kataware</h1>
-                    <p class="lede">Department of Civil and Infrastructure Engineering, Indian Institute of Technology Dharwad — researching asphalt materials, binder rheology, and sustainable, resilient pavements.</p>
+                    <h1 class="display" style="white-space:nowrap;">Dr. Aniket V. Kataware</h1>
+                    <p class="lede" id="heroLede">Department of Civil and Infrastructure Engineering, Indian Institute of Technology Dharwad — researching asphalt materials, binder rheology, and sustainable, resilient pavements.</p>
                     <div class="hero-actions">
                         <a href="https://scholar.google.com/citations?user=GXYFqtMAAAAJ&hl=en" target="_blank" class="btn"><i class="fa-brands fa-google"></i> Google Scholar</a>
                         <a href="https://www.linkedin.com/in/dr-aniket-vasantrao-kataware-10870359/" target="_blank" class="btn btn-outline"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+                    </div>
+                    <div class="hero-affiliations" aria-label="Affiliations">
+                        <span class="affil-label">Affiliated with</span>
+                        <div class="affil-logos">
+                            <span class="affil-item">
+                                <img src="https://drive.google.com/thumbnail?id=13ASKVdAk6o8oMQFvj-qj-gzz2ZQ1my9F&sz=w400" alt="IIT Dharwad" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+                                <span class="affil-name">IIT Dharwad</span>
+                            </span>
+                            <span class="affil-item">
+                                <img src="https://drive.google.com/thumbnail?id=1jR7pHhcc07DrFUtsKyrxqdBjHHu9pMr0&sz=w400" alt="Pavement Engineering Research Group" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+                                <span class="affil-name">Pavement Engineering Research Group</span>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="hero-photo">
@@ -433,15 +634,15 @@
 
         <!-- ===================== ANNOUNCEMENTS + FOCUS ===================== -->
         <section id="homeIntro" class="section view-active">
-            <div class="wrap two-col">
-                <div class="announcement-box reveal">
+            <div class="wrap">
+                <div class="announcement-box reveal mb-3">
                     <h3><i class="fa-solid fa-bullhorn"></i> Announcements</h3>
                     <ul class="announcement-list" id="announcementList"></ul>
                 </div>
                 <div class="reveal">
                     <span class="eyebrow">Research Focus</span>
-                    <h2 class="display" style="font-size:2.1rem; margin-bottom:1rem;">What I work on</h2>
-                    <p class="lead-text">My research focuses on Hot and Warm Mix Asphalt, Asphalt Binder Rheology, Pavement Materials &amp; evaluation, Pavement Management System, Recycled Asphalt Pavements, Concrete Pavements, Sustainable and Resilient Pavements, Pavement Design and Analysis, Pavement Rehabilitation, and Non-destructive Pavement Testing.</p>
+                    <h2 class="display" id="researchFocusHeading" style="font-size:2.1rem; margin-bottom:1rem;">What I work on</h2>
+                    <p class="lead-text" id="researchFocus">My research focuses on Hot and Warm Mix Asphalt, Asphalt Binder Rheology, Pavement Materials &amp; evaluation, Pavement Management System, Recycled Asphalt Pavements, Concrete Pavements, Sustainable and Resilient Pavements, Pavement Design and Analysis, Pavement Rehabilitation, and Non-destructive Pavement Testing.</p>
                 </div>
             </div>
         </section>
@@ -454,26 +655,25 @@
                     <h2 class="display">Biography</h2>
                 </div>
                 <div class="card reveal mb-3">
-                    <p style="margin-bottom:1rem;">I am an Assistant Professor in the Department of Civil and Infrastructure Engineering at Indian Institute of Technology Dharwad, Karnataka. I completed my M.Tech in Civil Engineering from IIT Kharagpur and Ph.D in Civil Engineering from Indian Institute of Technology Bombay, India.</p>
-                    <p>My current research interests include Hot and Warm Mix Asphalt, Asphalt Binder Rheology, Pavement Materials &amp; evaluation, Pavement Management System, Recycled Asphalt Pavements, Concrete Pavements, Sustainable and Resilient Pavements, Pavement Design and Analysis, Pavement Rehabilitation, and Non-destructive Pavement Testing.</p>
+                    <p id="aboutBio1" style="margin-bottom:1rem;">I am an Assistant Professor in the Department of Civil and Infrastructure Engineering at Indian Institute of Technology Dharwad, Karnataka. I completed my M.Tech in Civil Engineering from IIT Kharagpur and Ph.D in Civil Engineering from Indian Institute of Technology Bombay, India.</p>
+                    <p id="aboutBio2">My current research interests include Hot and Warm Mix Asphalt, Asphalt Binder Rheology, Pavement Materials &amp; evaluation, Pavement Management System, Recycled Asphalt Pavements, Concrete Pavements, Sustainable and Resilient Pavements, Pavement Design and Analysis, Pavement Rehabilitation, and Non-destructive Pavement Testing.</p>
                 </div>
-                <div class="grid-2 reveal">
+                <div class="about-grid reveal">
                     <div class="card">
-                        <h3 style="margin-bottom:1.8rem; color:var(--primary);"><i class="fa-solid fa-graduation-cap"></i> Education</h3>
-                        <div class="timeline">
-                            <div class="timeline-item"><div class="timeline-date">2013 — 2018</div><h3>Ph.D. Civil Engineering</h3><p style="margin:0;">IIT Bombay, India</p></div>
-                            <div class="timeline-item"><div class="timeline-date">2010 — 2012</div><h3>M.Tech. Civil Engineering</h3><p style="margin:0;">IIT Kharagpur, India</p></div>
-                            <div class="timeline-item"><div class="timeline-date">2005 — 2009</div><h3>B.E. Civil Engineering</h3><p style="margin:0;">WCE, Sangli, Maharashtra</p></div>
-                        </div>
+                        <h3 style="margin-bottom:1.8rem; color:var(--primary);"><i class="fa-solid fa-briefcase"></i> Experience</h3>
+                        <div class="timeline" id="experienceTimeline"></div>
                     </div>
                     <div class="card">
-                        <h3 style="margin-bottom:1.8rem; color:var(--primary);"><i class="fa-solid fa-briefcase"></i> Experience (8+ Years)</h3>
-                        <div class="timeline">
-                            <div class="timeline-item"><div class="timeline-date">2022 — Present</div><h3>Assistant Professor</h3><p style="margin:0;">IIT Dharwad</p></div>
-                            <div class="timeline-item"><div class="timeline-date">2020 — 2022</div><h3>R&amp;D Manager</h3><p style="margin:0;">L&amp;T Construction TI IC</p></div>
-                            <div class="timeline-item"><div class="timeline-date">2018 — 2020</div><h3>Deputy Consultant</h3><p style="margin:0;">SOWiL Limited</p></div>
-                            <div class="timeline-item"><div class="timeline-date">2018</div><h3>Research Associate</h3><p style="margin:0;">IIT Bombay</p></div>
-                        </div>
+                        <h3 style="margin-bottom:1.8rem; color:var(--primary);"><i class="fa-solid fa-user-tie"></i> Honorary Roles</h3>
+                        <div class="timeline" id="honoraryTimeline"></div>
+                    </div>
+                    <div class="card">
+                        <h3 style="margin-bottom:1.8rem; color:var(--primary);"><i class="fa-solid fa-helmet-safety"></i> Pre-Ph.D. Work</h3>
+                        <div class="timeline" id="prePhdTimeline"></div>
+                    </div>
+                    <div class="card">
+                        <h3 style="margin-bottom:1.8rem; color:var(--primary);"><i class="fa-solid fa-graduation-cap"></i> Education</h3>
+                        <div class="timeline" id="educationTimeline"></div>
                     </div>
                 </div>
             </div>
@@ -498,6 +698,9 @@
                     <h2 class="display">Projects, Lab &amp; Group</h2>
                 </div>
 
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-people-group"></i> Pavement Engineering Research Group (PERG)</h3></div>
+                <p class="lead-text reveal mb-3" id="pergAbout">The Pavement Engineering Research Group (PERG) at IIT Dharwad investigates the full life-cycle of pavements — from asphalt binder rheology and hot, warm &amp; cold mix design to recycled materials, non-destructive evaluation and sustainable, resilient pavement systems. Pairing advanced laboratory characterisation with field performance studies, PERG works closely with academia and industry to build longer-lasting, greener road and transport infrastructure.</p>
+
                 <div class="sub-head reveal"><h3><i class="fa-solid fa-flask-vial"></i> Sponsored Research Projects (R&amp;D)</h3></div>
                 <div class="grid-2 reveal" id="projectsGrid"></div>
 
@@ -507,19 +710,12 @@
                 </div>
 
                 <div class="sub-head reveal"><h3><i class="fa-solid fa-microscope"></i> PERG Laboratory Facilities</h3></div>
-                <p class="lead-text reveal mb-3">The Pavement Engineering Research Group (PERG) is equipped with state-of-the-art facilities to conduct advanced research and evaluation of pavement materials. Explore the equipment categories below.</p>
+                <p class="lead-text reveal mb-3" id="labIntro">The Pavement Engineering Research Group (PERG) is equipped with state-of-the-art facilities to conduct advanced research and evaluation of pavement materials. Explore the equipment categories below.</p>
                 <div class="lab-tabs reveal" id="labTabs"></div>
                 <div class="lab-carousel-wrapper reveal">
                     <div class="lab-track" id="labTrack"></div>
                 </div>
                 <p class="center" style="color:var(--text-muted); font-size:.9rem; margin-top:1rem;"><em>Hover over the scrolling gallery to pause and view equipment details.</em></p>
-
-                <div class="sub-head reveal"><h3><i class="fa-solid fa-people-group"></i> Research Group (PERG)</h3></div>
-                <p class="lead-text reveal mb-3">Our research is organised into focused sub-groups. Each card lists the team working under that theme along with their timelines.</p>
-                <div class="grid-3 reveal" id="prgGroupGrid"></div>
-
-                <div class="sub-head reveal"><h3><i class="fa-solid fa-calendar-check"></i> Special Activities</h3></div>
-                <div class="grid-3 reveal" id="activitiesGrid"></div>
             </div>
         </section>
 
@@ -593,17 +789,17 @@
                     <h2 class="display">Honors, Talks &amp; Service</h2>
                 </div>
 
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-id-card"></i> Memberships &amp; Committees</h3></div>
+                <div class="grid-3 reveal" id="outreachGrid"></div>
+
                 <div class="sub-head reveal"><h3><i class="fa-solid fa-trophy"></i> Honors &amp; Awards</h3></div>
                 <div class="grid-3 reveal" id="honorsGrid"></div>
 
-                <div class="sub-head reveal"><h3><i class="fa-solid fa-microphone-lines"></i> Invited Lectures &amp; Keynotes (12+)</h3></div>
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-microphone-lines"></i> Invited Lectures &amp; Keynotes (<span id="talkCount">12</span>+)</h3></div>
                 <div class="card pub-card reveal">
                     <div class="auto-scroll-container" id="talksScroll"></div>
                     <p class="scroll-note"><em>Scroll within the list to view all entries</em></p>
                 </div>
-
-                <div class="sub-head reveal"><h3><i class="fa-solid fa-id-card"></i> Memberships, Committees &amp; Workshops</h3></div>
-                <div class="grid-3 reveal" id="outreachGrid"></div>
             </div>
         </section>
 
@@ -612,14 +808,27 @@
             <div class="wrap">
                 <div class="section-head reveal">
                     <span class="eyebrow">Media</span>
-                    <h2 class="display">Gallery &amp; News</h2>
+                    <h2 class="display">Gallery</h2>
                 </div>
 
-                <div class="sub-head reveal"><h3><i class="fa-solid fa-newspaper"></i> Latest News</h3></div>
-                <div class="grid-2 reveal" id="newsGrid"></div>
+                <div class="sub-head reveal"><h3><i class="fa-solid fa-calendar-check"></i> Special Activities</h3></div>
+                <div class="grid-3 reveal" id="activitiesGrid"></div>
 
                 <div class="sub-head reveal"><h3><i class="fa-solid fa-images"></i> Image Gallery</h3></div>
                 <div class="gallery-grid reveal" id="galleryGrid"></div>
+            </div>
+        </section>
+
+        <!-- ============================ RESOURCES ============================ -->
+        <section id="resources" class="section band">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Learn &amp; Explore</span>
+                    <h2 class="display">Resources</h2>
+                    <p id="resourcesIntro">A curated set of links — from IIT Dharwad's own facilities and portals to leading international databases for pavement and transportation engineering research.</p>
+                </div>
+                <!-- groups (IITDH / International) are built from the "Resources" Google-Sheet tab -->
+                <div id="resourcesGroups" class="reveal"></div>
             </div>
         </section>
 
@@ -634,15 +843,15 @@
                     <div class="card">
                         <h3 style="margin-bottom:1.4rem; color:var(--primary); font-size:1.35rem;">Office Address</h3>
                         <div class="contact-info">
-                            <p><i class="fa-solid fa-building"></i> <span>136, Academic Block 1 (A1), Engineering Building<br>Department of Civil and Infrastructure Engineering</span></p>
-                            <p><i class="fa-solid fa-map-location-dot"></i> <span>Indian Institute of Technology Dharwad<br>Permanent Campus (PC), Chikkamalligawad<br>Dharwad – 580 011, Karnataka, India</span></p>
+                            <p><i class="fa-solid fa-building"></i> <span id="contactOffice">136, Academic Block 1 (A1), Engineering Building<br>Department of Civil and Infrastructure Engineering</span></p>
+                            <p><i class="fa-solid fa-map-location-dot"></i> <span id="contactCampus">Indian Institute of Technology Dharwad<br>Permanent Campus (PC), Chikkamalligawad<br>Dharwad – 580 011, Karnataka, India</span></p>
                         </div>
                     </div>
                     <div class="card">
                         <h3 style="margin-bottom:1.4rem; color:var(--primary); font-size:1.35rem;">Reach Me</h3>
                         <div class="contact-info">
-                            <p><i class="fa-solid fa-envelope"></i> <span><a href="mailto:aniket.kataware@iitdh.ac.in" style="color:inherit; text-decoration:none;">aniket.kataware@iitdh.ac.in</a><br><a href="mailto:aniket.kataware@gmail.com" style="color:inherit; text-decoration:none;">aniket.kataware@gmail.com</a></span></p>
-                            <p><i class="fa-solid fa-phone"></i> <span>(+91) 9975109110</span></p>
+                            <p><i class="fa-solid fa-envelope"></i> <span><a href="mailto:aniket.kataware@iitdh.ac.in" style="color:var(--primary); font-weight:600; text-decoration:none;">aniket.kataware@iitdh.ac.in</a><br><a href="mailto:aniket.kataware@gmail.com" style="color:var(--primary); font-weight:600; text-decoration:none;">aniket.kataware@gmail.com</a></span></p>
+                            <p><i class="fa-solid fa-phone"></i> <span id="contactPhone">(+91) 9975109110</span></p>
                         </div>
                         <div style="margin-top:1.6rem; display:flex; gap:1rem; flex-wrap:wrap;">
                             <a href="https://www.linkedin.com/in/dr-aniket-vasantrao-kataware-10870359/" target="_blank" class="btn btn-outline"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
@@ -663,9 +872,33 @@
         </section>
     </main>
 
-    <footer>
-        <p><strong>© 2026 Dr. Aniket Vasantrao Kataware.</strong> All Rights Reserved.</p>
-        <p class="foot-sub">Indian Institute of Technology Dharwad (IITDH)</p>
+    <footer class="site-footer">
+        <svg class="track-art" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+                <pattern id="rfTies" width="34" height="120" patternUnits="userSpaceOnUse">
+                    <rect x="12.5" y="28" width="9" height="64" rx="2" fill="#7c5326"/>
+                    <rect x="12.5" y="28" width="9" height="64" rx="2" fill="none" stroke="#46301a" stroke-width="1"/>
+                </pattern>
+            </defs>
+            <!-- ballast bed (semi-transparent so the page shows through) -->
+            <rect x="0" y="22" width="1200" height="78" fill="#171310" fill-opacity="0.4"/>
+            <!-- sleepers (cross-ties) -->
+            <rect x="0" y="0" width="1200" height="120" fill="url(#rfTies)"/>
+            <!-- two steel rails laid over the sleepers -->
+            <rect x="0" y="44" width="1200" height="6" fill="#9aa1a8"/>
+            <rect x="0" y="70" width="1200" height="6" fill="#9aa1a8"/>
+            <!-- bright top-shine + dark underside for a metallic edge -->
+            <rect x="0" y="44"   width="1200" height="2"   fill="#e8ebee"/>
+            <rect x="0" y="70"   width="1200" height="2"   fill="#e8ebee"/>
+            <rect x="0" y="48.5" width="1200" height="1.5" fill="#5c626a"/>
+            <rect x="0" y="74.5" width="1200" height="1.5" fill="#5c626a"/>
+        </svg>
+
+        <div class="footer-plate">
+            <span class="foot-tag">Pavement Engineering Research</span>
+            <p><strong>© 2026 Dr. Aniket Vasantrao Kataware.</strong> All Rights Reserved.</p>
+            <p class="foot-sub">Indian Institute of Technology Dharwad (IITDH)</p>
+        </div>
     </footer>
 
     <script>
@@ -675,29 +908,33 @@
            alternate layout shows exactly the same live content)
            ============================================================ */
         const CONFIG = {
-            sheetId: '1jIgyQtBtbKJdLEOKhc2PSRwZgl6ehYe8',
+            sheetId: '1UVkj4hcnLBa0a4oP9l_c9yFtXvJcd7xA',
 //https://docs.google.com/spreadsheets/d/1d0sERAc2Y_IwyedBAPtJEOIiOJ_epgn_/edit?usp=sharing&ouid=118158977973989935593&rtpof=true&sd=true
             tabs: {
+                siteText:      'SiteText',
+                education:     'Education',
+                experience:    'Experience',
+                honoraryRoles: 'HonoraryRoles',
+                prePhd:        'PrePhD',
                 stats:         'Stats',
                 announcements: 'Announcements',
                 journals:      'Journals',
                 conferences:   'Conferences',
                 projects:      'Projects',
                 consultancy:   'Consultancy',
-                team:          'Team',
+                team:          'PhDStudents',
                 talks:         'Talks',
                 lab:           'LabEquipment',
-                news:          'News',
                 mtech:         'MTechStudents',
                 btech:         'BTechStudents',
                 interns:       'ResearchInterns',
                 gallery:       'Gallery',
                 honors:        'Honors',
                 activities:    'Activities',
-                perg:          'ResearchGroup',
                 patents:       'Patents',
                 teaching:      'Teaching',
-                outreach:      'Outreach'
+                outreach:      'Outreach',
+                resources:     'Resources'
             }
         };
 
@@ -738,7 +975,19 @@
             const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">' +
                 '<rect width="100%" height="100%" fill="#efe7d9"/>' +
                 '<rect x="1" y="1" width="' + (w - 2) + '" height="' + (h - 2) + '" fill="none" stroke="#e2d6c2" stroke-width="2"/>' +
-                '<text x="50%" y="50%" dy="0.34em" text-anchor="middle" font-family="Inter,Helvetica,Arial,sans-serif" font-size="' + fs + '" font-weight="600" fill="#b4532a" opacity="0.55">' + label + '</text>' +
+                '<text x="50%" y="50%" dy="0.34em" text-anchor="middle" font-family="Inter,Helvetica,Arial,sans-serif" font-size="' + fs + '" font-weight="600" fill="#2563eb" opacity="0.55">' + label + '</text>' +
+                '</svg>';
+            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        }
+        /* Local initials avatar (inline SVG, no external service) — used for
+           people with no photo and as the error fallback when a photo fails. */
+        function avatarData(name){
+            const parts = (name || '').toString().trim().split(/\s+/).filter(Boolean);
+            let ini = (parts[0] ? parts[0][0] : '') + (parts.length > 1 ? parts[parts.length - 1][0] : '');
+            ini = (ini || '?').toUpperCase().replace(/[<>&"']/g, '');
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">' +
+                '<rect width="200" height="200" fill="#262019"/>' +
+                '<text x="50%" y="52%" dy="0.34em" text-anchor="middle" font-family="Inter,Helvetica,Arial,sans-serif" font-size="84" font-weight="600" fill="#f4c20d">' + ini + '</text>' +
                 '</svg>';
             return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
         }
@@ -863,8 +1112,41 @@
                 return '<li>' + esc(r.Title) + authors + v + '</li>';
             });
         }
+        /* ---------- editable free text (SiteText tab: Key -> Value) ----------
+           Any row whose Key matches an element id replaces that element's text. */
+        function renderSiteText(rows){
+            rows.forEach(r => {
+                const key = (r.Key || r.Id || '').toString().trim();
+                if(!key) return;
+                const el = document.getElementById(key);
+                if(!el) return;
+                const val = (r.Value != null ? r.Value : (r.Text || '')).toString();
+                // multi-line cell -> line breaks; otherwise plain text (keeps it injection-safe)
+                if(val.indexOf('\n') !== -1) el.innerHTML = val.split('\n').map(esc).join('<br>');
+                else el.textContent = val;
+            });
+        }
+        /* ---------- About-page timelines (Date, Title, Subtitle) ---------- */
+        function timelineItems(rows){
+            return rows.map(r => {
+                const date  = (r.Date || '').toString().trim();
+                const title = (r.Title || r.Role || r.Degree || '').toString().trim();
+                const sub   = (r.Subtitle || r.Sub || r.Institution || r.Organisation || '').toString().trim();
+                if(!title && !date && !sub) return '';   // skip empty / wrong-tab fallback rows
+                const d = date ? '<div class="timeline-date">' + esc(date) + '</div>' : '';
+                const s = sub ? '<p style="margin:0;">' + esc(sub) + '</p>' : '';
+                return '<div class="timeline-item">' + d + '<h3>' + esc(title) + '</h3>' + s + '</div>';
+            }).join('');
+        }
+        function renderTimelineInto(id, rows){ const el = document.getElementById(id); if(el) el.innerHTML = timelineItems(rows); }
+        function renderExperience(rows){    renderTimelineInto('experienceTimeline', rows); }
+        function renderHonoraryRoles(rows){ renderTimelineInto('honoraryTimeline',  rows); }
+        function renderPrePhd(rows){        renderTimelineInto('prePhdTimeline',    rows); }
+        function renderEducation(rows){     renderTimelineInto('educationTimeline', rows); }
+
         function renderTalks(rows){
             const el = document.getElementById('talksScroll'); if(!el) return;
+            const tc = document.getElementById('talkCount'); if(tc) tc.textContent = rows.length;
             el.innerHTML = numberedList(rows, r => {
                 const venue = r.Venue ? '<div class="pub-meta">' + esc(r.Venue) + '</div>' : '';
                 const d = r.Date ? '<div class="pub-journal">' + esc(r.Date) + '</div>' : '';
@@ -889,13 +1171,17 @@
         }
         function renderConsultancy(rows){
             const el = document.getElementById('consultancyTrack'); if(!el) return;
-            const imgs = rows.map(r => '<img src="' + esc(resolveImg(r.Logo, 400)) + '" alt="' + esc(r.Name) + '" title="' + esc(r.Name) + '" class="marquee-logo">').join('');
+            const imgs = rows.map(r => {
+                const url = resolveImg(r.Logo, 400);
+                if(!url) return '';   // skip blank logos so we never emit <img src="">
+                return '<img src="' + esc(url) + '" alt="' + esc(r.Name) + '" title="' + esc(r.Name) + '" class="marquee-logo" referrerpolicy="no-referrer">';
+            }).join('');
             el.innerHTML = imgs + imgs;
         }
         function peopleCards(rows){
             return rows.map(r => {
                 const name = esc(r.Name);
-                const avatar = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(r.Name || '') + '&background=262019&color=f4c20d&size=200';
+                const avatar = avatarData(r.Name);   // inline SVG initials, always renders
                 const photo = (r.Photo || '').toString().trim();
                 const src = photo ? resolveImg(photo, 800) : avatar;
                 const status = (r.Status || '').toString().trim();
@@ -908,7 +1194,7 @@
                 const gBadge = guide ? '<span class="badge badge-guide"><i class="fa-solid fa-user-tie"></i> ' + esc(guide) + '</span>' : '';
                 const topic = r.Topic ? '<p class="person-topic"><strong>Topic:</strong> ' + esc(r.Topic) + '</p>' : '';
                 const link = (r.ScholarLink || '').toString().trim();
-                const img = '<img src="' + esc(src) + '" alt="' + name + '" class="person-photo" onerror="this.onerror=null;this.src=\'' + avatar + '\'">';
+                const img = '<img src="' + esc(src) + '" alt="' + name + '" class="person-photo" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=\'' + avatar + '\'">';
                 const photoWrap = link
                     ? '<a href="' + esc(link) + '" target="_blank" class="person-photo-link">' + img + '</a>'
                     : img;
@@ -931,10 +1217,25 @@
         function renderBtech(rows){    renderInto('btechGrid',   peopleCards(rows)); }
         function renderInterns(rows){  renderInto('internsGrid', peopleCards(rows)); }
 
+        // Build a cross-fading image carousel for any card whose image field holds
+        // several links (separated by space/comma/semicolon/pipe). Wired by initImageCarousels().
+        function carouselMedia(imgs, alt, size, ph){
+            const onerr = ' onerror="this.onerror=null;this.src=\'' + ph + '\'"';
+            const slides = imgs.map((im, i) =>
+                '<img src="' + esc(resolveImg(im, size)) + '" class="ic-slide' + (i === 0 ? ' active' : '') + '" alt="' + esc(alt) + '" referrerpolicy="no-referrer"' + onerr + '>'
+            ).join('');
+            const dots = imgs.map((_, i) =>
+                '<button class="ic-dot' + (i === 0 ? ' active' : '') + '" data-i="' + i + '" aria-label="Image ' + (i + 1) + '"></button>'
+            ).join('');
+            return '<div class="img-carousel">' + slides +
+                   '<button class="ic-nav ic-prev" aria-label="Previous image"><i class="fa-solid fa-chevron-left"></i></button>' +
+                   '<button class="ic-nav ic-next" aria-label="Next image"><i class="fa-solid fa-chevron-right"></i></button>' +
+                   '<div class="ic-dots">' + dots + '</div></div>';
+        }
         function renderGallery(rows){
             const el = document.getElementById('galleryGrid'); if(!el) return;
             el.innerHTML = rows.map(r => {
-                const src = resolveImg((r.Image || '').toString().trim(), 800);
+                const imgs = splitImages(r.Image);
                 const meta = (r.Details || r.Caption || r.Info || r.Meta || '').toString();
                 const parts = meta.split('|').map(s => s.trim());
                 const caption = parts[0] || '';
@@ -945,50 +1246,88 @@
                 const capHtml = caption ? '<div class="gallery-cap">' + esc(caption) + '</div>' : '';
                 const ph = phData('Image', 400, 300);
                 const figcap = (capHtml || dateHtml || tagHtml) ? '<figcaption>' + capHtml + dateHtml + tagHtml + '</figcaption>' : '';
-                return '<figure class="gallery-card"><img src="' + esc(src || ph) + '" alt="' + esc(caption) +
-                       '" onerror="this.onerror=null;this.src=\'' + ph + '\'">' + figcap + '</figure>';
+                const media = imgs.length > 1
+                    ? carouselMedia(imgs, caption, 800, ph)
+                    : '<img src="' + esc((resolveImg(imgs[0] || '', 800)) || ph) + '" alt="' + esc(caption) + '" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=\'' + ph + '\'">';
+                return '<figure class="gallery-card">' + media + figcap + '</figure>';
             }).join('');
+            initImageCarousels(el);
         }
 
         function imageInfoCards(rows){
             return rows.map(r => {
-                const img = (r.Image || '').toString().trim();
+                const imgs = splitImages(r.Image);                 // supports multiple pics per card
                 const title = esc(r.Title || r.Heading || '');
                 const desc = esc(r.Description || r.Text || r.Explanation || '');
                 const ph = phData('Image', 700, 190);
-                const top = img
-                    ? '<img src="' + esc(resolveImg(img, 700)) + '" class="info-card-img" alt="' + title + '" onerror="this.onerror=null;this.src=\'' + ph + '\'">'
-                    : '<div class="info-card-icon"><i class="fa-solid fa-award"></i></div>';
+                const onerr = ' onerror="this.onerror=null;this.src=\'' + ph + '\'"';
+                let top;
+                if(imgs.length > 1){
+                    // in-card carousel: stacked cross-fading images + overlaid controls
+                    const slides = imgs.map((im, i) =>
+                        '<img src="' + esc(resolveImg(im, 700)) + '" class="info-card-img' + (i === 0 ? ' active' : '') + '" alt="' + title + '"' + onerr + '>'
+                    ).join('');
+                    const dots = imgs.map((_, i) =>
+                        '<button class="ic-dot' + (i === 0 ? ' active' : '') + '" data-i="' + i + '" aria-label="Image ' + (i + 1) + '"></button>'
+                    ).join('');
+                    top = '<div class="info-card-media">' + slides +
+                          '<button class="ic-nav ic-prev" aria-label="Previous image"><i class="fa-solid fa-chevron-left"></i></button>' +
+                          '<button class="ic-nav ic-next" aria-label="Next image"><i class="fa-solid fa-chevron-right"></i></button>' +
+                          '<div class="ic-dots">' + dots + '</div></div>';
+                } else if(imgs.length === 1){
+                    top = '<img src="' + esc(resolveImg(imgs[0], 700)) + '" class="info-card-img" alt="' + title + '"' + onerr + '>';
+                } else {
+                    top = '<div class="info-card-icon"><i class="fa-solid fa-award"></i></div>';
+                }
                 return '<div class="card info-card">' + top +
                        '<div class="info-card-body"><h3>' + title + '</h3><p>' + desc + '</p></div></div>';
             }).join('');
         }
-        function renderHonors(rows){     renderInto('honorsGrid',     imageInfoCards(rows)); }
-        function renderActivities(rows){ renderInto('activitiesGrid', imageInfoCards(rows)); }
+        function renderHonors(rows){     renderInto('honorsGrid',     imageInfoCards(rows)); initImageCarousels(document.getElementById('honorsGrid')); }
+        function renderActivities(rows){ renderInto('activitiesGrid', imageInfoCards(rows)); initImageCarousels(document.getElementById('activitiesGrid')); }
 
-        function renderPrgGroup(rows){
-            const el = document.getElementById('prgGroupGrid'); if(!el) return;
-            el.innerHTML = rows.map(r => {
-                const group = esc(r.Group || r.Name || r.Title || '');
-                const desc = (r.Description || r.Focus || '') ? '<p class="prg-desc">' + esc(r.Description || r.Focus) + '</p>' : '';
-                const members = (r.Members || r.People || '').toString().split(/[\n;]+/).map(s => s.trim()).filter(Boolean);
-                const list = members.map(m => {
-                    let name = m, time = '';
-                    if(m.indexOf('|') !== -1){ const p = m.split('|'); name = p[0].trim(); time = (p[1] || '').trim(); }
-                    else { const mt = m.match(/^(.*?)\s*\(([^)]*)\)\s*$/); if(mt){ name = mt[1].trim(); time = mt[2].trim(); } }
-                    return '<li><span class="prg-member">' + esc(name) + '</span>' + (time ? '<span class="prg-time">' + esc(time) + '</span>' : '') + '</li>';
+        // Resources — link cards grouped by Category (e.g. "IITDH Resources",
+        // "International Resources"). Each card: Image, Title, Description, Link.
+        function renderResources(rows){
+            const el = document.getElementById('resourcesGroups'); if(!el) return;
+            const groups = {}, order = [];                       // group rows by category, first-seen order
+            rows.forEach(r => {
+                const cat = (r.Category || r.Group || r.Section || 'Resources').toString().trim() || 'Resources';
+                const title = (r.Title || r.Name || r.Heading || '').toString().trim();
+                if(!title) return;
+                if(!groups[cat]){ groups[cat] = []; order.push(cat); }
+                groups[cat].push(r);
+            });
+            if(!order.length){
+                setStatus('resourcesGroups', 'fa-circle-info', 'Add a "Resources" tab (columns: Category, Image, Title, Description, Link) to your Google Sheet to list resources here.');
+                return;
+            }
+            const icons = { 'iitdh resources':'fa-building-columns', 'international resources':'fa-earth-asia' };
+            el.innerHTML = order.map(cat => {
+                const ic = icons[cat.toLowerCase()] || 'fa-link';
+                const cards = groups[cat].map(r => {
+                    const title = esc(r.Title || r.Name || r.Heading || '');
+                    const desc  = esc(r.Description || r.Text || r.Info || '');
+                    const link  = (r.Link || r.URL || r.Url || r.Href || '').toString().trim();
+                    const ph    = phData('Resource', 400, 260);
+                    const imgs  = splitImages(r.Image || r.Photo || r.Logo);
+                    const media = imgs.length > 1
+                        ? carouselMedia(imgs, title, 600, ph)
+                        : '<img src="' + esc((resolveImg(imgs[0] || '', 600)) || ph) + '" class="resource-img" alt="' + title + '" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=\'' + ph + '\'">';
+                    const linkHtml = link ? '<span class="resource-link">Visit <i class="fa-solid fa-arrow-right"></i></span>' : '';
+                    const ext   = link ? '<span class="resource-ext"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>' : '';
+                    const open  = link ? '<a class="resource-card" href="' + esc(link) + '" target="_blank" rel="noopener">' : '<div class="resource-card">';
+                    const close = link ? '</a>' : '</div>';
+                    return open +
+                        '<div class="resource-media">' + media + ext + '</div>' +
+                        '<div class="resource-body"><h4>' + title + '</h4>' +
+                        (desc ? '<p>' + desc + '</p>' : '') + linkHtml + '</div>' +
+                        close;
                 }).join('');
-                return '<div class="card prg-card"><h3 class="prg-title"><i class="fa-solid fa-people-group"></i> ' + group + '</h3>' +
-                       desc + '<ul class="prg-list">' + list + '</ul></div>';
+                return '<div class="sub-head"><h3><i class="fa-solid ' + ic + '"></i> ' + esc(cat) + '</h3><span class="sub-count">' + groups[cat].length + '</span></div>' +
+                       '<div class="resource-grid">' + cards + '</div>';
             }).join('');
-        }
-        function renderNews(rows){
-            const el = document.getElementById('newsGrid'); if(!el) return;
-            el.innerHTML = rows.map(r =>
-                '<div class="card"><div class="timeline-date" style="margin-bottom:1rem;">' + esc(r.Date) + '</div>' +
-                '<h3 style="font-size:1.2rem;">' + esc(r.Title) + '</h3>' +
-                '<p style="font-size:1rem;">' + esc(r.Text) + '</p></div>'
-            ).join('');
+            initImageCarousels(el);
         }
 
         /* ---------- laboratory carousel ---------- */
@@ -1081,12 +1420,13 @@
         function renderOutreach(rows){
             const el = document.getElementById('outreachGrid'); if(!el) return;
             if(!rows.some(r => (r.Item || '').toString().trim())){
-                setStatus('outreachGrid', 'fa-circle-info', 'Add an "Outreach" tab (columns: Category, Item, Year) to your Google Sheet to list memberships & workshops here.');
+                setStatus('outreachGrid', 'fa-circle-info', 'Add an "Outreach" tab (columns: Category, Item, Year) to your Google Sheet to list memberships & committees here.');
                 return;
             }
             const order = [], groups = {};
             rows.forEach(r => {
                 const cat = (r.Category || 'Other').toString().trim();
+                if(cat.toLowerCase() === 'workshops') return;   // Workshops no longer shown
                 if(!groups[cat]){ groups[cat] = []; order.push(cat); }
                 groups[cat].push(r);
             });
@@ -1102,28 +1442,49 @@
         }
 
         const SECTIONS = [
+            { tab:'siteText',      id:'',                 fn:renderSiteText,      label:'site text'            },
+            { tab:'experience',    id:'experienceTimeline', fn:renderExperience,  label:'experience'           },
+            { tab:'honoraryRoles', id:'honoraryTimeline', fn:renderHonoraryRoles, label:'honorary roles'       },
+            { tab:'prePhd',        id:'prePhdTimeline',   fn:renderPrePhd,        label:'pre-Ph.D. work'       },
+            { tab:'education',     id:'educationTimeline', fn:renderEducation,    label:'education'            },
             { tab:'stats',         id:'statsGrid',        fn:renderStats,         label:'statistics'           },
             { tab:'announcements', id:'announcementList', fn:renderAnnouncements, label:'announcements'         },
             { tab:'journals',      id:'journalScroll',    fn:renderJournals,      label:'journal publications'  },
             { tab:'conferences',   id:'confScroll',       fn:renderConferences,   label:'conferences'           },
             { tab:'projects',      id:'projectsGrid',     fn:renderProjects,      label:'projects'              },
             { tab:'consultancy',   id:'consultancyTrack', fn:renderConsultancy,   label:'consultancy partners'  },
-            { tab:'team',          id:'teamGrid',         fn:renderTeam,          label:'team members'          },
+            { tab:'team',          id:'teamGrid',         fn:renderTeam,          label:'Ph.D. scholars', alts:['Team'], expect:'Name' },
             { tab:'talks',         id:'talksScroll',      fn:renderTalks,         label:'invited talks'         },
-            { tab:'news',          id:'newsGrid',         fn:renderNews,          label:'news'                  },
             { tab:'mtech',         id:'mtechGrid',        fn:renderMtech,         label:'M.Tech. students'      },
             { tab:'btech',         id:'btechGrid',        fn:renderBtech,         label:'B.Tech. students'      },
             { tab:'interns',       id:'internsGrid',      fn:renderInterns,       label:'research interns'      },
             { tab:'gallery',       id:'galleryGrid',      fn:renderGallery,       label:'gallery'               },
             { tab:'honors',        id:'honorsGrid',       fn:renderHonors,        label:'honors & awards'       },
             { tab:'activities',    id:'activitiesGrid',   fn:renderActivities,    label:'special activities'    },
-            { tab:'perg',          id:'prgGroupGrid',     fn:renderPrgGroup,      label:'research group'        },
             { tab:'patents',       id:'patentScroll',     fn:renderPatents,       label:'patents'               },
             { tab:'teaching',      id:'teachingGrid',     fn:renderTeaching,      label:'courses taught'        },
-            { tab:'outreach',      id:'outreachGrid',     fn:renderOutreach,      label:'outreach'              }
+            { tab:'outreach',      id:'outreachGrid',     fn:renderOutreach,      label:'outreach'              },
+            { tab:'resources',     id:'resourcesGroups',  fn:renderResources,     label:'resources'             }
         ];
 
         /* ---------- master loader ---------- */
+        /* Try several tab names in order, returning the first whose rows actually
+           contain the expected column. (gviz returns the FIRST sheet for a tab
+           name that doesn't exist, so we validate the shape before accepting.) */
+        async function gvizFetchFallback(names, expectCol){
+            let last = [];
+            for(const name of names){
+                try {
+                    const rows = await gvizFetch(name);
+                    if(rows && rows.length){
+                        if(!expectCol || Object.prototype.hasOwnProperty.call(rows[0], expectCol)) return rows;
+                        last = rows;   // wrong sheet (gviz fallback) — keep trying
+                    }
+                } catch(e){ /* try the next candidate */ }
+            }
+            return last;
+        }
+
         async function loadAllData(){
             const T = CONFIG.tabs;
 
@@ -1138,7 +1499,7 @@
             setStatus('labTrack', 'fa-spinner fa-spin', 'Loading lab equipment...');
 
             await Promise.allSettled(SECTIONS.map(s =>
-                gvizFetch(T[s.tab])
+                (s.alts ? gvizFetchFallback([T[s.tab]].concat(s.alts), s.expect) : gvizFetch(T[s.tab]))
                     .then(rows => {
                         if(rows && rows.length){
                             SECTION_COUNTS[s.tab] = rows.length;
@@ -1175,17 +1536,87 @@
         const VIEWS = {
             home:['home','homeStats','homeIntro'], about:['about'], teaching:['teaching'],
             research:['research'], publications:['publications'], students:['team'],
-            recognition:['recognition'], gallery:['gallery'], contact:['contact']
+            recognition:['recognition'], gallery:['gallery'], resources:['resources'], contact:['contact']
         };
         // Sub-section ids (e.g. stat "Target" cells) -> the VIEW that contains them.
         const NAV_ALIAS = {
             journals:'publications', conferences:'publications', patents:'publications',
-            projects:'research', lab:'research', perg:'research', consultancy:'research', activities:'research',
+            projects:'research', lab:'research', consultancy:'research', activities:'gallery',
             talks:'recognition', honors:'recognition', memberships:'recognition', outreach:'recognition',
-            team:'students', phdscholars:'students', mtech:'students', btech:'students', interns:'students',
-            news:'gallery'
+            team:'students', phdscholars:'students', mtech:'students', btech:'students', interns:'students'
         };
         const ALL_VIEW_SECTIONS = Object.values(VIEWS).reduce((a, b) => a.concat(b), []);
+
+        /* ---------- in-card image carousels ----------
+           Wires the prev/next buttons and dots inside any .info-card-media that
+           holds more than one image, cross-fading between the stacked pictures. */
+        function initImageCarousels(root){
+            if(!root) return;
+            const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+            root.querySelectorAll('.info-card-media, .img-carousel').forEach(media => {
+                if(media.dataset.init) return;
+                const slides = Array.from(media.querySelectorAll('.info-card-img, .ic-slide'));
+                if(slides.length < 2) return;
+                media.dataset.init = '1';
+                const dots = Array.from(media.querySelectorAll('.ic-dot'));
+                let i = 0, timer = null;
+                const show = n => {
+                    i = (n + slides.length) % slides.length;
+                    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+                    dots.forEach((d, k) => d.classList.toggle('active', k === i));
+                };
+                const stop  = () => { if(timer){ clearInterval(timer); timer = null; } };
+                const start = () => { if(reduceMotion) return; stop(); timer = setInterval(() => show(i + 1), 3500); };
+                const go    = n => { show(n); start(); };   // manual nav restarts the autoplay clock
+                const prev = media.querySelector('.ic-prev'), next = media.querySelector('.ic-next');
+                if(prev) prev.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); go(i - 1); });
+                if(next) next.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); go(i + 1); });
+                dots.forEach(d => d.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); go(+d.dataset.i); }));
+                media.addEventListener('mouseenter', stop);   // pause while inspecting
+                media.addEventListener('mouseleave', start);
+                start();                                       // auto-run
+            });
+        }
+
+        /* ---- on-scroll "assemble" reveal engine ----
+           Each element is classified the first time it appears — by where it sits
+           horizontally — and then flies in from the left, the right, or grows in
+           from the centre. Card grids (.assemble) reveal their children one-by-one
+           the same way, including children that arrive later from the Sheet. */
+        const ASSEMBLE_SEL = '.grid-2, .grid-3, .people-list, .gallery-grid, .resource-grid, .about-grid, .stats-grid';
+        let revealObserver = null;
+        const assembleSeen = new WeakSet();
+        function dirFor(el, vw){
+            const r = el.getBoundingClientRect();
+            if(!r.width) return 'center';
+            if(r.width >= vw * 0.72) return 'center';            // wide block → grow
+            const ratio = (r.left + r.right) / 2 / vw;
+            return ratio < 0.40 ? 'left' : ratio > 0.60 ? 'right' : 'center';
+        }
+        function playAssemble(c){
+            const vw = window.innerWidth || document.documentElement.clientWidth || 1;
+            const kids = Array.from(c.children).filter(k => k.nodeType === 1 && !k.classList.contains('in'));
+            kids.forEach((k, i) => {
+                k.dataset.dir = dirFor(k, vw);
+                k.style.setProperty('--rd', Math.min(i * 0.05, 0.26) + 's');
+            });
+            requestAnimationFrame(() => kids.forEach(k => k.classList.add('in')));
+        }
+        function showReveal(el){
+            if(el.classList.contains('in')) return;
+            if(el.classList.contains('assemble')){ assembleSeen.add(el); el.classList.add('in'); playAssemble(el); return; }
+            el.dataset.dir = dirFor(el, window.innerWidth || document.documentElement.clientWidth || 1);
+            requestAnimationFrame(() => el.classList.add('in'));
+        }
+        function triggerInView(section){
+            if(!section) return;
+            const vh = window.innerHeight || 0;
+            section.querySelectorAll('.reveal:not(.in), .assemble:not(.in)').forEach(el => {
+                const r = el.getBoundingClientRect();
+                if(r.top < vh * 0.96 && r.bottom > 0) showReveal(el);
+            });
+        }
+
         function navTo(id){
             const view = VIEWS[id] ? id : (NAV_ALIAS[id] || id);
             const ids = VIEWS[view]; if(!ids) return;
@@ -1194,11 +1625,12 @@
                 const s = document.getElementById(sid); if(!s) return;
                 void s.offsetWidth;                          // restart the entrance animation
                 s.classList.add('view-active');
-                s.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
             });
             document.querySelectorAll('.main-nav a').forEach(a => a.classList.toggle('active', a.dataset.target === view));
             window.scrollTo(0, 0);
             closeMenu();
+            // assemble whatever is in view now; the observer handles the rest on scroll
+            requestAnimationFrame(() => requestAnimationFrame(() => ids.forEach(sid => triggerInView(document.getElementById(sid)))));
         }
         function openMenu(){
             const n = document.getElementById('mainNav'); if(n) n.classList.add('open');
@@ -1227,13 +1659,30 @@
 
             // on-scroll reveal (within whichever view is showing)
             const reveals = Array.from(document.querySelectorAll('.reveal'));
+            // gentle cascade: reveals sharing a parent rise in sequence (capped so groups never feel slow)
+            const revealGroups = new Map();
+            reveals.forEach(el => {
+                const p = el.parentElement;
+                const arr = revealGroups.get(p) || []; arr.push(el); revealGroups.set(p, arr);
+            });
+            revealGroups.forEach(arr => arr.forEach((el, i) => el.style.setProperty('--rd', Math.min(i * 0.05, 0.24) + 's')));
+
+            // card grids assemble child-by-child; also catch children that load later from the Sheet
+            const assembleEls = Array.from(document.querySelectorAll(ASSEMBLE_SEL));
+            assembleEls.forEach(c => {
+                c.classList.add('assemble');
+                new MutationObserver(() => { if(assembleSeen.has(c)) playAssemble(c); }).observe(c, { childList:true });
+            });
+
             if('IntersectionObserver' in window){
-                const ro = new IntersectionObserver((entries, obs) => {
-                    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); } });
+                revealObserver = new IntersectionObserver((entries, obs) => {
+                    entries.forEach(e => { if(e.isIntersecting){ showReveal(e.target); obs.unobserve(e.target); } });
                 }, { rootMargin:'0px 0px -8% 0px', threshold:0.06 });
-                reveals.forEach(el => ro.observe(el));
+                reveals.forEach(el => revealObserver.observe(el));
+                assembleEls.forEach(c => revealObserver.observe(c));
             } else {
                 reveals.forEach(el => el.classList.add('in'));
+                assembleEls.forEach(c => { assembleSeen.add(c); playAssemble(c); });
             }
         }
 
@@ -1264,7 +1713,7 @@
         const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
         // Warm palette sampled from the page (terracotta / gold / sage / ink).
-        const COLORS = ['180,83,42', '230,170,31', '93,125,110', '141,61,28'];
+        const COLORS = ['37,99,235', '59,130,246', '100,150,240', '29,71,168'];
         const GRID = 66;           // grid cell size in px
         const GRID_LINE = '20,18,14';   // near-black ink for the lattice
 
@@ -1282,25 +1731,70 @@
                 r: small ? rand(0.4, 1.5) : rand(1.2, 3.2),
                 vx: rand(-0.12, 0.12),
                 vy: small ? rand(-0.10, -0.03) : rand(-0.20, -0.05),
-                a: small ? rand(0.10, 0.32) : rand(0.16, 0.42),
+                a: small ? rand(0.10, 0.32) : rand(0.22, 0.50),
                 tw: rand(0, Math.PI * 2),
                 tws: rand(0.006, 0.018),
                 c: pick(COLORS)
             };
         }
 
-        // A pulse rides along one grid line (horizontal or vertical).
+        // Gold-biased glow tones so the cars light up like the pulses.
+        const CAR_COLORS = ['59,130,246', '59,130,246', '37,99,235'];
+        // A pulse rides along one grid line. Some are instead side-view
+        // vehicles that travel a horizontal grid line: ~14% a long train
+        // (the rail), ~36% a small car (the road), the rest plain glow pulses.
+        // pick a grid line not already used by another horizontal/vertical object,
+        // so cars, trains and pulses don't pile up running along the same line
+        function laneTaken(val, horiz){
+            for(let k = 0; k < pulses.length; k++){
+                const q = pulses[k];
+                if(q && q.kind !== 'plane' && q.horiz === horiz && q.fixed === val) return true;
+            }
+            return false;
+        }
+        function pickGY(){
+            for(let t = 0; t < 8; t++){ const g = (1 + ((Math.random() * (rows - 1)) | 0)) * GRID; if(!laneTaken(g, true)) return g; }
+            return (1 + ((Math.random() * (rows - 1)) | 0)) * GRID;
+        }
+        function pickGX(){
+            for(let t = 0; t < 8; t++){ const g = (1 + ((Math.random() * (cols - 1)) | 0)) * GRID; if(!laneTaken(g, false)) return g; }
+            return (1 + ((Math.random() * (cols - 1)) | 0)) * GRID;
+        }
         function makePulse(){
+            const roll = Math.random();
+            if(roll < 0.08){
+                // aeroplane that climbs diagonally from below the screen upward
+                const dir = Math.random() < 0.5 ? 1 : -1;
+                const sp = rand(1.2, 2.0), ang = rand(0.34, 0.52);
+                return { kind:'plane', dir, ang,
+                         x: dir > 0 ? rand(-40, W * 0.5) : rand(W * 0.5, W + 40), y: H + rand(20, 90),
+                         vx: dir * sp * Math.cos(ang), vy: -sp * Math.sin(ang),
+                         c: pick(CAR_COLORS), scale: rand(0.8, 1.1), a: rand(0.50, 0.66), life:0 };
+            }
+            if(roll < 0.22){
+                const gy = pickGY();
+                const dir = Math.random() < 0.5 ? 1 : -1;
+                return { kind:'train', horiz:true, fixed:gy, pos: dir > 0 ? -130 : W + 130, dir,
+                         sp: rand(0.45, 0.85), c: pick(CAR_COLORS), scale: rand(0.78, 1.0),
+                         a: rand(0.50, 0.68), life:0 };
+            }
+            if(roll < 0.56){
+                const gy = pickGY();
+                const dir = Math.random() < 0.5 ? 1 : -1;
+                return { kind:'car', horiz:true, fixed:gy, pos: dir > 0 ? -34 : W + 34, dir,
+                         sp: rand(0.4, 1.0), c: pick(CAR_COLORS), scale: rand(0.85, 1.2),
+                         a: rand(0.50, 0.70), style: Math.random() < 0.6 ? 'sharp' : 'bug', life:0 };
+            }
             const horiz = Math.random() < 0.5;
-            const c = Math.random() < 0.7 ? '230,170,31' : '180,83,42'; // gold-biased glow
+            const c = Math.random() < 0.7 ? '59,130,246' : '37,99,235'; // blue glow
             if(horiz){
-                const gy = (1 + ((Math.random() * (rows - 1)) | 0)) * GRID;
+                const gy = pickGY();
                 const dir = Math.random() < 0.5 ? 1 : -1;
-                return { horiz:true, fixed:gy, pos: dir > 0 ? -20 : W + 20, dir, sp: rand(0.6, 1.6), len: rand(34, 90), c, life:0 };
+                return { kind:'light', horiz:true, fixed:gy, pos: dir > 0 ? -20 : W + 20, dir, sp: rand(0.6, 1.6), len: rand(34, 90), c, life:0 };
             } else {
-                const gx = (1 + ((Math.random() * (cols - 1)) | 0)) * GRID;
+                const gx = pickGX();
                 const dir = Math.random() < 0.5 ? 1 : -1;
-                return { horiz:false, fixed:gx, pos: dir > 0 ? -20 : H + 20, dir, sp: rand(0.6, 1.6), len: rand(34, 90), c, life:0 };
+                return { kind:'light', horiz:false, fixed:gx, pos: dir > 0 ? -20 : H + 20, dir, sp: rand(0.6, 1.6), len: rand(34, 90), c, life:0 };
             }
         }
 
@@ -1308,7 +1802,7 @@
             const mp = (W * H) / 1000000;                  // megapixels on screen
             const nDust = Math.max(14, Math.min(80,  Math.round(mp * 42)));
             const nAgg  = Math.max(10, Math.min(46,  Math.round(mp * 22)));
-            const nPulse= Math.max(6,  Math.min(20,  Math.round(mp * 9)));
+            const nPulse= Math.max(5,  Math.min(17,  Math.round(mp * 7.6)));   // +20% spawn rate
             dust = []; agg = []; pulses = [];
             for(let i = 0; i < nDust; i++) dust.push(makeMote(true));
             for(let i = 0; i < nAgg;  i++) agg.push(makeMote(false));
@@ -1327,29 +1821,169 @@
 
         function drawGrid(){
             ctx.lineWidth = 1;
-            ctx.strokeStyle = 'rgba(' + GRID_LINE + ',0.055)';
+            ctx.strokeStyle = 'rgba(' + GRID_LINE + ',0.1)';
             ctx.beginPath();
             for(let x = GRID; x < W; x += GRID){ ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, H); }
             for(let y = GRID; y < H; y += GRID){ ctx.moveTo(0, y + 0.5); ctx.lineTo(W, y + 0.5); }
             ctx.stroke();
         }
 
+        // A low, sleek modern car silhouette, centred on its grid line and
+        // flipped to face its travel direction. Glows like the pulses.
+        function drawCar(p){
+            const s = p.scale || 1;
+            ctx.save();
+            ctx.translate(p.pos, p.fixed);
+            ctx.scale(p.dir * s, s);               // face direction of travel
+            // soft glowing halo so it lights up the grid like the pulses
+            ctx.shadowColor = 'rgba(' + p.c + ',0.95)';
+            ctx.shadowBlur = 11;
+            ctx.fillStyle = 'rgba(' + p.c + ',' + p.a.toFixed(3) + ')';
+            ctx.beginPath();
+            if(p.style === 'sharp'){
+                // ultra-low angular concept wedge — pointed nose, creased fastback
+                ctx.moveTo(-16.5, 3.2);
+                ctx.lineTo(-16, -1.2);                      // sharp kicked-up tail
+                ctx.lineTo(-10.5, -3.4);                    // hard crease to rear deck
+                ctx.lineTo(-2.5, -8.2);                     // steep fastback roofline
+                ctx.lineTo(5.5, -8.4);                      // low knife-edge roof peak
+                ctx.lineTo(8.5, -4.6);                      // sharply raked windshield
+                ctx.lineTo(13.5, -3.7);                     // hood crease
+                ctx.lineTo(18.5, -2.3);                     // long low hood
+                ctx.lineTo(19.5, 1.4);                      // pointed splitter nose
+                ctx.lineTo(16.5, 3.2);                      // front bumper
+            } else {
+                // rounded "bug" profile — smooth domed cabin
+                ctx.moveTo(-15, 3);
+                ctx.lineTo(-15, 0.5);
+                ctx.quadraticCurveTo(-14.5, -2, -10, -2.6); // rear deck
+                ctx.quadraticCurveTo(-4, -8, 3, -7.4);      // roofline dome
+                ctx.quadraticCurveTo(8.5, -7, 10.5, -2.6);  // raked windshield → hood
+                ctx.lineTo(15, -1.6);                       // long low hood
+                ctx.quadraticCurveTo(16.5, -1, 16.5, 1);    // front nose
+                ctx.lineTo(15.5, 3);                        // front bumper
+            }
+            ctx.closePath();
+            ctx.fill();
+            // wheels with bright alloy centres
+            ctx.shadowBlur = 7;
+            ctx.fillStyle = 'rgba(' + p.c + ',' + Math.min(1, p.a * 1.5).toFixed(3) + ')';
+            ctx.beginPath(); ctx.arc(-8.5, 3, 2.7, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc( 9,   3, 2.7, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = 'rgba(255,250,235,0.85)';
+            ctx.beginPath(); ctx.arc(-8.5, 3, 0.9, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc( 9,   3, 0.9, 0, Math.PI * 2); ctx.fill();
+            // bright headlight beam at the nose — the modern glowing accent
+            ctx.shadowBlur = 9;
+            ctx.shadowColor = 'rgba(255,250,235,0.95)';
+            ctx.fillStyle = 'rgba(255,250,235,0.95)';
+            ctx.beginPath(); ctx.arc(15.8, 0, 1.1, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+        }
+
+        // A sleek modern train gliding along a grid line (the rail). Like the
+        // car it glows and faces its travel direction — just longer, with a
+        // coupled carriage, a sharp aerodynamic nose and lit windows.
+        function drawTrain(p){
+            const s = p.scale || 1;
+            ctx.save();
+            ctx.translate(p.pos, p.fixed);
+            ctx.scale(p.dir * s, s);                // face direction of travel
+            ctx.shadowColor = 'rgba(' + p.c + ',0.9)';
+            ctx.shadowBlur = 11;
+            ctx.fillStyle = 'rgba(' + p.c + ',' + p.a.toFixed(3) + ')';
+            // trailing carriage
+            ctx.beginPath();
+            ctx.moveTo(-58, 4); ctx.lineTo(-58, -7); ctx.lineTo(-55, -9);
+            ctx.lineTo(-15, -9); ctx.lineTo(-13, -7); ctx.lineTo(-13, 4);
+            ctx.closePath(); ctx.fill();
+            // power car with sharp aerodynamic raked nose
+            ctx.beginPath();
+            ctx.moveTo(-11, 4); ctx.lineTo(-11, -7); ctx.lineTo(-8, -9);
+            ctx.lineTo(26, -9); ctx.lineTo(38, -4.5);   // raked windscreen
+            ctx.lineTo(43, 0.6);                          // sharp pointed nose
+            ctx.lineTo(41, 4);
+            ctx.closePath(); ctx.fill();
+            // lit windows
+            ctx.shadowBlur = 4;
+            ctx.fillStyle = 'rgba(255,250,235,0.82)';
+            for(let wx = -54; wx <= -18; wx += 7){ ctx.fillRect(wx, -6.4, 4, 3.8); }   // carriage
+            for(let wx = -7;  wx <=  18; wx += 7){ ctx.fillRect(wx, -6.4, 4, 3.8); }   // power car
+            // slanted driver windscreen near the nose
+            ctx.beginPath();
+            ctx.moveTo(27, -6.6); ctx.lineTo(36, -4.2); ctx.lineTo(36, -1.2); ctx.lineTo(27, -2.2);
+            ctx.closePath(); ctx.fill();
+            // bogie wheels with bright centres
+            ctx.shadowBlur = 7;
+            ctx.fillStyle = 'rgba(' + p.c + ',' + Math.min(1, p.a * 1.5).toFixed(3) + ')';
+            const tw = [-53, -46, -32, -20, 6, 14, 30];
+            for(let i = 0; i < tw.length; i++){ ctx.beginPath(); ctx.arc(tw[i], 4.5, 2.3, 0, Math.PI * 2); ctx.fill(); }
+            ctx.fillStyle = 'rgba(255,250,235,0.85)';
+            for(let i = 0; i < tw.length; i++){ ctx.beginPath(); ctx.arc(tw[i], 4.5, 0.8, 0, Math.PI * 2); ctx.fill(); }
+            // bright headlight at the nose
+            ctx.shadowBlur = 9;
+            ctx.shadowColor = 'rgba(255,250,235,0.95)';
+            ctx.fillStyle = 'rgba(255,250,235,0.95)';
+            ctx.beginPath(); ctx.arc(41.5, 1.2, 1.1, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+        }
+
+        // A sleek side-profile aeroplane that climbs diagonally up the screen —
+        // glows and tilts along its flight path like the car and train.
+        function drawPlane(p){
+            const s = p.scale || 1;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.scale(p.dir * s, s);                // mirror for left-bound flights
+            ctx.rotate(-p.ang);                     // climb angle — nose points up
+            ctx.shadowColor = 'rgba(' + p.c + ',0.9)';
+            ctx.shadowBlur = 11;
+            ctx.fillStyle = 'rgba(' + p.c + ',' + p.a.toFixed(3) + ')';
+            // fuselage with a pointed nose
+            ctx.beginPath();
+            ctx.moveTo(-24, 0.5); ctx.lineTo(-21, -2.4); ctx.lineTo(14, -2.6);
+            ctx.quadraticCurveTo(30, -2.2, 33, 0);      // nose
+            ctx.quadraticCurveTo(30, 2.2, 14, 2.8); ctx.lineTo(-18, 2.6);
+            ctx.closePath(); ctx.fill();
+            // vertical tail fin
+            ctx.beginPath();
+            ctx.moveTo(-24, -2); ctx.lineTo(-29, -11); ctx.lineTo(-18, -2.4);
+            ctx.closePath(); ctx.fill();
+            // swept main wing
+            ctx.beginPath();
+            ctx.moveTo(4, 2); ctx.lineTo(-12, 12); ctx.lineTo(-2, 2.6); ctx.lineTo(10, 2.4);
+            ctx.closePath(); ctx.fill();
+            // cabin windows
+            ctx.shadowBlur = 3;
+            ctx.fillStyle = 'rgba(255,250,235,0.8)';
+            for(let wx = -16; wx <= 12; wx += 4){ ctx.fillRect(wx, -1.4, 2, 1.6); }
+            // bright nose / nav light
+            ctx.shadowBlur = 9;
+            ctx.shadowColor = 'rgba(255,250,235,0.95)';
+            ctx.fillStyle = 'rgba(255,250,235,0.95)';
+            ctx.beginPath(); ctx.arc(32, 0, 1, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+        }
+
         function drawPulses(){
             for(let i = 0; i < pulses.length; i++){
                 const p = pulses[i];
+                if(p.kind === 'plane'){ drawPlane(p); continue; }
+                if(p.kind === 'train'){ drawTrain(p); continue; }
+                if(p.kind === 'car'){ drawCar(p); continue; }
                 const x = p.horiz ? p.pos : p.fixed;
                 const y = p.horiz ? p.fixed : p.pos;
                 const x2 = p.horiz ? p.pos - p.dir * p.len : p.fixed;
                 const y2 = p.horiz ? p.fixed : p.pos - p.dir * p.len;
                 // glowing trail
                 const g = ctx.createLinearGradient(x, y, x2, y2);
-                g.addColorStop(0, 'rgba(' + p.c + ',0.55)');
+                g.addColorStop(0, 'rgba(' + p.c + ',0.66)');
                 g.addColorStop(1, 'rgba(' + p.c + ',0)');
                 ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
                 ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x2, y2); ctx.stroke();
                 // bright head with soft halo
                 const halo = ctx.createRadialGradient(x, y, 0, x, y, 7);
-                halo.addColorStop(0, 'rgba(' + p.c + ',0.9)');
+                halo.addColorStop(0, 'rgba(' + p.c + ',0.98)');
                 halo.addColorStop(1, 'rgba(' + p.c + ',0)');
                 ctx.fillStyle = halo;
                 ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.fill();
@@ -1367,8 +2001,8 @@
                     const q = agg[j];
                     const dx = p.x - q.x, dy = p.y - q.y, d2 = dx * dx + dy * dy;
                     if(d2 < maxD2){
-                        const o = (1 - d2 / maxD2) * 0.18;
-                        ctx.strokeStyle = 'rgba(141,61,28,' + o.toFixed(3) + ')';
+                        const o = (1 - d2 / maxD2) * 0.28;
+                        ctx.strokeStyle = 'rgba(29,71,168,' + o.toFixed(3) + ')';
                         ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
                     }
                 }
@@ -1397,9 +2031,15 @@
         function stepPulses(){
             for(let i = 0; i < pulses.length; i++){
                 const p = pulses[i];
+                if(p.kind === 'plane'){                       // planes fly a diagonal climb
+                    p.x += p.vx; p.y += p.vy;
+                    if(p.y < -70 || p.x < -140 || p.x > W + 140) pulses[i] = makePulse();
+                    continue;
+                }
                 p.pos += p.dir * p.sp;
                 const span = p.horiz ? W : H;
-                if(p.dir > 0 ? p.pos > span + 30 : p.pos < -30) pulses[i] = makePulse();
+                const m = p.kind === 'train' ? 150 : 30;     // train is long — recycle later
+                if(p.dir > 0 ? p.pos > span + m : p.pos < -m) pulses[i] = makePulse();
             }
         }
 
@@ -1419,7 +2059,8 @@
         }
 
         function start(){
-            if(reduceMotion){ stop(); paint(); return; }   // single static frame
+            // The ambient drift is gentle and decorative, so we keep it running
+            // even under prefers-reduced-motion (site owner's preference).
             if(running) return;
             running = true; raf = requestAnimationFrame(frame);
         }
@@ -1434,5 +2075,27 @@
     })();
     </script>
 
+    <script>
+        /* Email links: let the mail app open (mailto) AND copy the address with a
+           confirmation toast, so a click always does something useful even when no
+           default mail client is configured. */
+        (function(){
+            function toast(msg){
+                var t = document.createElement('div');
+                t.className = 'copy-toast'; t.textContent = msg;
+                document.body.appendChild(t);
+                requestAnimationFrame(function(){ t.classList.add('show'); });
+                setTimeout(function(){ t.classList.remove('show'); setTimeout(function(){ t.remove(); }, 350); }, 2200);
+            }
+            document.addEventListener('click', function(e){
+                var a = e.target.closest && e.target.closest('a[href^="mailto:"]');
+                if(!a) return;
+                var email = a.getAttribute('href').replace(/^mailto:/i, '').split('?')[0];
+                if(navigator.clipboard && navigator.clipboard.writeText){
+                    navigator.clipboard.writeText(email).then(function(){ toast('✓ Email copied — ' + email); }).catch(function(){ toast(email); });
+                } else { toast(email); }
+            }, false);
+        })();
+    </script>
 </body>
 </html>
