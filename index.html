@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dr. Aniket V. Kataware | Pavement Engineering Research</title>
+
+    <!-- Favicon: inline SVG (no external file needed). A road with gold lane
+         markings on asphalt — matches the site's blue + road-marking-gold theme. -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23262019'/%3E%3Crect x='6' y='3' width='1.6' height='26' rx='.8' fill='%232563eb' opacity='.7'/%3E%3Crect x='24.4' y='3' width='1.6' height='26' rx='.8' fill='%232563eb' opacity='.7'/%3E%3Crect x='14.8' y='4' width='2.4' height='5.5' rx='1.2' fill='%23e6aa1f'/%3E%3Crect x='14.8' y='13.2' width='2.4' height='5.5' rx='1.2' fill='%23e6aa1f'/%3E%3Crect x='14.8' y='22.4' width='2.4' height='5.5' rx='1.2' fill='%23e6aa1f'/%3E%3C/svg%3E">
+
+    <!-- Google Analytics (GA4) — REPLACE G-XXXXXXXXXX with your Measurement ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -337,7 +351,10 @@
         .resource-card:hover{ transform:translateY(-7px); box-shadow:var(--shadow-hover); border-color:transparent; }
         .resource-card:hover::before{ transform:scaleX(1); }
         .resource-media{ position:relative; overflow:hidden; background:var(--bg-body); }
-        .resource-img{ width:100%; height:182px; object-fit:cover; display:block; transition:transform .6s var(--ease-out); }
+        /* Dynamic frame: height tracks the card width via aspect-ratio instead of a
+           fixed pixel slab, so the image scales proportionally on every screen.
+           object-fit:contain shows the WHOLE image — nothing is ever cropped. */
+        .resource-img{ width:100%; aspect-ratio:16/10; height:auto; object-fit:contain; object-position:center; padding:.6rem; display:block; transition:transform .6s var(--ease-out); }
         .resource-card:hover .resource-img{ transform:scale(1.06); }
         .resource-media::after{ content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(38,32,25,0) 55%,rgba(38,32,25,.42)); opacity:0; transition:opacity var(--dur-2) ease; }
         .resource-card:hover .resource-media::after{ opacity:1; }
@@ -390,7 +407,8 @@
         .img-carousel .ic-nav{ opacity:0; }
         .img-carousel:hover .ic-nav{ opacity:1; }
         .gallery-card .img-carousel{ height:190px; border-bottom:3px solid var(--accent); }
-        .resource-media .img-carousel{ height:182px; }
+        .resource-media .img-carousel{ aspect-ratio:16/10; height:auto; }
+        .resource-media .img-carousel .ic-slide{ object-fit:contain; padding:.6rem; }
 
         /* --- RESEARCH GROUP CARDS --- */
         .prg-title{ font-family:'Fraunces',serif; display:flex; align-items:center; gap:.6rem; font-size:1.2rem; color:var(--heading-color); padding-bottom:.9rem; margin-bottom:1rem; border-bottom:2px solid var(--border-color); }
@@ -498,13 +516,13 @@
 
         /* --- RESPONSIVE --- */
         @media (max-width:920px){
-            .site-header{ overflow:visible; }
-            .main-nav{ position:fixed; top:0; right:0; height:100vh; width:min(290px,82vw); background
-:var(--bg-card); box-shadow:-10px 0 34px rgba(0,0,0,.16); flex-direction:column; align-items:stretch;
-gap:.15rem; padding:4.8rem 1.2rem 2rem; transform:translateX(100%); transition:transform .32s ease; z-
-index:1300; overflow-y:auto; }
             .menu-toggle{ display:block; }
-            .main-nav{ position:fixed; top:0; right:0; height:100vh; width:min(290px,82vw); background:var(--bg-card); box-shadow:-10px 0 34px rgba(0,0,0,.16); flex-direction:column; align-items:stretch; gap:.15rem; padding:4.8rem 1.2rem 2rem; transform:translateX(100%); transition:transform .32s ease; z-index:1100; overflow-y:auto; }
+            /* iOS Safari clips position:fixed children inside a sticky +
+               overflow:hidden ancestor — which hid the slide-in menu entirely.
+               Let the header overflow so the fixed menu can fill the screen.
+               (The road-marking SVG is sized to the header box, so it can't spill.) */
+            .site-header{ overflow:visible; }
+            .main-nav{ position:fixed; top:0; right:0; height:100vh; width:min(290px,82vw); background:var(--bg-card); box-shadow:-10px 0 34px rgba(0,0,0,.16); flex-direction:column; align-items:stretch; gap:.15rem; padding:4.8rem 1.2rem 2rem; transform:translateX(100%); transition:transform .32s ease; z-index:1300; overflow-y:auto; }
             .main-nav.open{ transform:none; }
             .main-nav a{ width:100%; padding:.85rem 1rem; font-size:.96rem; border-radius:8px; color:var(--text-main); background:transparent; }
             .main-nav a:hover{ color:var(--primary); background:var(--primary-light); }
@@ -1760,10 +1778,15 @@ index:1300; overflow-y:auto; }
             }
         }
 
+        // Always open the site at the very top: stop the browser from restoring
+        // the previous scroll position on reload, and force the top on load.
+        if('scrollRestoration' in history) history.scrollRestoration = 'manual';
         window.addEventListener('DOMContentLoaded', () => {
             initUI();
             loadAllData();
+            window.scrollTo(0, 0);
         });
+        window.addEventListener('load', () => window.scrollTo(0, 0));
     </script>
 
     <script>
@@ -1836,8 +1859,9 @@ index:1300; overflow-y:auto; }
         }
         function makePulse(){
             const roll = Math.random();
-            if(roll < 0.08){
+            if(roll < 0.16){
                 // aeroplane that climbs diagonally from below the screen upward
+                // (doubled spawn rate: was 0.08 → now 0.16)
                 const dir = Math.random() < 0.5 ? 1 : -1;
                 const sp = rand(1.2, 2.0), ang = rand(0.34, 0.52);
                 return { kind:'plane', dir, ang,
@@ -1845,14 +1869,14 @@ index:1300; overflow-y:auto; }
                          vx: dir * sp * Math.cos(ang), vy: -sp * Math.sin(ang),
                          c: pick(CAR_COLORS), scale: rand(0.8, 1.1), a: rand(0.50, 0.66), life:0 };
             }
-            if(roll < 0.22){
+            if(roll < 0.30){
                 const gy = pickGY();
                 const dir = Math.random() < 0.5 ? 1 : -1;
                 return { kind:'train', horiz:true, fixed:gy, pos: dir > 0 ? -130 : W + 130, dir,
                          sp: rand(0.45, 0.85), c: pick(CAR_COLORS), scale: rand(0.78, 1.0),
                          a: rand(0.50, 0.68), life:0 };
             }
-            if(roll < 0.56){
+            if(roll < 0.64){
                 const gy = pickGY();
                 const dir = Math.random() < 0.5 ? 1 : -1;
                 return { kind:'car', horiz:true, fixed:gy, pos: dir > 0 ? -34 : W + 34, dir,
