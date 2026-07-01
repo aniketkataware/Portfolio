@@ -329,10 +329,13 @@
         @keyframes labScroll{ to{ transform:translateX(calc(-50% - .9rem)); } }
 
         /* --- GALLERY --- */
-        .gallery-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:1.4rem; }
+        /* Wider min track so ~3 frames fit per row on desktop instead of 4. */
+        .gallery-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.4rem; }
         .gallery-card{ margin:0; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); overflow:hidden; box-shadow:var(--shadow-sm); transition:transform .3s ease, box-shadow .3s ease; }
         .gallery-card:hover{ transform:translateY(-5px); box-shadow:var(--shadow-md); }
-        .gallery-card img{ width:100%; height:190px; object-fit:cover; display:block; background:var(--bg-body); border-bottom:3px solid var(--accent); }
+        /* Same "fit perfectly" rule as resources: dynamic aspect-ratio frame +
+           object-fit:contain so the WHOLE gallery image shows, never cropped. */
+        .gallery-card img{ width:100%; aspect-ratio:16/10; height:auto; object-fit:contain; object-position:center; padding:.6rem; display:block; background:var(--bg-body); border-bottom:3px solid var(--accent); }
         .gallery-card figcaption{ padding:1rem 1.1rem 1.2rem; }
         .gallery-cap{ font-family:'Fraunces',serif; font-weight:600; color:var(--heading-color); font-size:1.02rem; line-height:1.35; }
         .gallery-date{ font-size:.72rem; color:var(--text-muted); margin-top:.35rem; display:flex; gap:.4rem; align-items:center; }
@@ -403,7 +406,8 @@
         .img-carousel .ic-slide.active{ opacity:1; }
         .img-carousel .ic-nav{ opacity:0; }
         .img-carousel:hover .ic-nav{ opacity:1; }
-        .gallery-card .img-carousel{ height:190px; border-bottom:3px solid var(--accent); }
+        .gallery-card .img-carousel{ aspect-ratio:16/10; height:auto; border-bottom:3px solid var(--accent); }
+        .gallery-card .img-carousel .ic-slide{ object-fit:contain; padding:.6rem; }
         .resource-media .img-carousel{ aspect-ratio:16/10; height:auto; }
         .resource-media .img-carousel .ic-slide{ object-fit:contain; padding:.6rem; }
 
@@ -541,6 +545,9 @@
                phones and clips the images — collapse to one fluid column so the
                picture always fits perfectly within the screen. */
             .resource-grid{ grid-template-columns:1fr; }
+            /* Gallery uses a 300px min track (for 3-up on desktop); collapse it
+               to one fluid column on phones so wide frames never overflow. */
+            .gallery-grid{ grid-template-columns:1fr; }
             .about-grid{ columns:1; }
             /* keep the stats as one long strip — swipe horizontally on phones */
             .stats-grid{ overflow-x:auto; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
